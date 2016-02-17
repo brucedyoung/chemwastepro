@@ -7,6 +7,6 @@ It is based on the functions on a well-developed closed-system, but updated to u
 
 DO NOT USE. IT IS NOT IN A DEPLOYABLE STATE. I'm working on it every day.
 
-A preview of the functionality: https://brucedyoung.pythonanywhere.com/OHWM/
+A preview of the functionality: https://brucedyoung.pythonanywhere.com/chemwastepro
 
-Sample Manifest Printing: https://brucedyoung.pythonanywhere.com/OHWM/default/generate
+Sample Manifest Printing: https://brucedyoung.pythonanywhere.com/chemwastepro/default/generate
