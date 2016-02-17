@@ -141,7 +141,7 @@ def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
-    db.chemindex.chazard.represent = render_docs
+    #db.chemindex.chazard.represent = render_docs
     rows = db(db.chemindex.id>0).select()
     chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,cgroup=r.cgroup,cstate=r.cstate,cdisposalcode=r.cdisposalcode,tsdf=r.tsdf,treatment=r.treatment,chazwastecodes=r.chazwastecodes,chazard=r.chazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
