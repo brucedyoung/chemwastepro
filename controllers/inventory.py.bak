@@ -110,17 +110,30 @@ def shipment():
     shipment = json.dumps([dict(id=r.id,Manifest=r.Manifest,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     #form = SQLFORM(db.shipment,editable=True,)
 
-    return dict(PageHeader=PageHeader,results=XML(shipment), addbutton = addbutton )
+    return dict(PageHeader=PageHeader,results=XML(shipment), addbutton=XML(addbutton))
 def shipmentedit():
-    record = db.shipment(request.args(0)) or redirect(URL('index'))
-    form = SQLFORM(db.shipment, record)
+    fields=['Manifest',]
+    if (request.args(0)):
+        record = db.shipment(request.args(0)) or redirect(URL('error'))
+        form = SQLFORM(db.shipment, record,fields=fields)
+        #redirect(URL('container'))
+    else:
+        form = SQLFORM(db.shipment,fields=fields)
+        disposalcode  = ''
+        #redirect(URL('container'))
+    form.add_button('Back', URL('other_page'))
+
     if form.process().accepted:
        response.flash = 'form accepted'
-       record.update_record(**dict(form.vars))
+       try:
+            record.update_record(**dict(form.vars))#record is updated
+            redirect(URL('shipment'))
+       except NameError:
+            response.flash = 'record added'
+            redirect(URL('shipment'))
     elif form.errors:
-       redirect(URL('index'))
+       redirect(URL(form.errors))
        response.flash = 'form has errors'
-    return dict(form=form)
 
 def render_docs(ids,row):
       doc=""
@@ -133,23 +146,39 @@ def render_docs(ids,row):
 def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
+    addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
     db.chemindex.chazard.represent = render_docs
     rows = db(db.chemindex.id>0).select()
     chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,cgroup=r.cgroup,cstate=r.cstate,cdisposalcode=r.cdisposalcode,tsdf=r.tsdf,treatment=r.treatment,chazwastecodes=r.chazwastecodes,chazard=r.chazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
-    return dict(PageHeader=PageHeader,results=XML(chemindex))
+    return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
 
 
 def chemindexedit():
-    response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.js'))
-    response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.css'))
     PageHeader = "Chemical Index"
-    record = db.chemindex(request.args(0)) or redirect(URL('error'))
-    form = SQLFORM(db.chemindex, record,fields=['chemname', 'cprefix', 'casnum', 'cgroup', 'cstate', 'cdisposalcode', 'cpacktype', 'treatment', 'chazwastecodes', 'chazard', 'components','comments'])
+    fields=['chemname', 'cprefix', 'casnum', 'cgroup', 'cstate', 'cdisposalcode', 'cpacktype', 'treatment', 'chazwastecodes', 'chazard', 'components','comments']
+    if (request.args(0)): #UPDATE RECORD or INSERT RECORD
+        record = db.chemindex(request.args(0)) or redirect(URL('error'))
+        #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
+        form = SQLFORM(db.chemindex, record,fields=fields)
+    else:
+        form = SQLFORM(db.chemindex,fields=fields)
+        disposalcode  = ''
+    form.add_button('Back', URL('other_page'))
+    cancelbutton = XML( """<a href ="""+URL("inventory","container")+""" class="btn btn-block btn-warning">Cancel </a>""")
+
+    
+    #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.js'))
+    #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.css'))
+
     if form.process().accepted:
        response.flash = 'form accepted'
-       record.update_record(**dict(form.vars))
-       redirect(URL('chemindex'))
+       try:
+            record.update_record(**dict(form.vars))#record is updated
+            redirect(URL('chemindex'))
+       except NameError:
+            response.flash = 'record added'
+            redirect(URL('chemindex'))
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-    return dict(form=form)
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form)

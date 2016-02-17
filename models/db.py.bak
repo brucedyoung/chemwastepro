@@ -15,7 +15,7 @@ from gluon.contrib.appconfig import AppConfig
 myconf = AppConfig(reload=True)
 #Put a file in the root level of web2py, alongside the applications folder, with the connection string
 #example connection string = mysql://db_user:Passwrod!@localhost/OHWM
-file = open('chemwasteproconnectionstring.txt', 'r')
+file = open('OHWMconnectionstring.txt', 'r')
 connectionstring = file.readline().rstrip('\n')
 file.close()
 if not request.env.web2py_runtime_gae:
