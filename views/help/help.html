@@ -1,0 +1,16 @@
+{{extend 'layout.html'}}
+
+<h1>Purpose</h1>
+<p>
+    This program is intented to manage hazardous waste within the regulatory timeline for shipment to a Transfer Storage Disposal Facility (TSDF). In the normal process, handling begins when the waste arrives at the local accumulation area as an "item". The item can be put on a shelf in a storage cabinet, and then transferred to a container, usually a drum. A group of drums can be combined into a shipment, and a manifest is generated.
+    This program has many features to support this process.
+    1. It can accept items from a "tagging" system though an API. Typically this is used for accumulation at a satellite accumulation area, or lab.
+    2. Each step of handling (item, container, shipment) can be used seperately and independently. For example, items can be tracked and labeled without using the other steps. Containers and hazardous waste labels can be generated without items. Shipments and manifest can be generated without containers.
+    3. The program is web-based and cross-platform. By using web standards, and compliant browser is supported.
+    4. The labels and manifests are generated using PDF's, and can be formatted for any state's form, and printed to a multi-form dot-matrix printer. The item tag uses a propietary Dymo labelwriter program.
+    5. The authentication system in the framework can be used, or an external system like CAS, Kerberos, AD, or OpenID can be used.
+    6. Any database backend supported by the framework is supported, including MySQL, MS SQL Server, Oracle, SQLite, Postgres.
+    7. The business logic is simply coded and commented in seperate methods, and is intended to be understandable to a developer with a medium amount of experience. The database tables are optimized for flexibility and simplicity. 
+    8. Seed data is provided in tables, and the process of updating them is provided.
+    
+</p>

@@ -1,0 +1,198 @@
+{{extend 'layout.html'}}
+
+ {{=form.custom.begin}}
+
+
+        <!-- Main content -->
+        <section class="content">
+          <div class="row">
+            <!-- left column -->
+            <div class="col-md-6">
+              <!-- general form elements -->
+              <div class="box box-primary">
+                <div class="box-header with-border">
+                  <h3 class="box-title"> <strong>Container No</strong>   {{=form.custom.widget.id}}</h3>
+                </div><!-- /.box-header -->
+                <!-- form start -->
+                
+                  <div class="box-body">
+                    <div class="form-group">
+                     
+                        <!--Profile manifest-->
+                      <div class="box-body">
+                          <div class="row">
+                            <div class="col-xs-5">
+                                <strong>Profile</strong> {{=form.custom.widget.Profile}}
+                            </div>
+                            <div class="col-xs-5">
+                                <strong>Shipment/Manifest</strong>{{=form.custom.widget.cShipment}}
+                            </div>
+                          </div>
+                      </div><!-- /.box-body --> <!-- End generator stuff-->  
+                        
+                        
+                      <div class="box-body">
+                          <div class="row">
+                            <div class="col-xs-3">
+                              <strong>Generator</strong> {{=form.custom.widget.cgenerator}}
+                            </div>
+                            <div class="col-xs-4">
+                              <strong>EPA ID No.</strong><br>
+                              sbsdbsdbsdb223523xsdf   
+                            </div>
+                            <div class="col-xs-5">
+                                <strong>Generator Address</strong><br>
+                                <div class="input-sm">
+                                    123 Mainstrett<br>
+                                    Anywhere, WA 
+                                </div>    
+                               
+                            </div>
+                          </div>
+                      </div><!-- /.box-body --> <!-- End generator stuff-->
+                      <div>
+                      <strong>EPA Waste No.</strong>
+                                  {{=form.custom.widget.cstatefedwastecode}}     
+                      </div>    
+
+                      <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-3 ">
+                                  <strong>CA Waste No.</strong><br>
+                                  {{=form.custom.widget.cCAwastecode}}                                  
+                              </div>
+                              <div class="col-xs-5">
+                                  <strong>Accumulation Start Date</strong><br>
+                                  {{=form.custom.widget.AccumulationStartDate}}     
+                              </div>
+                          </div>
+                      </div><!-- /.box-body -->  
+                      <div>
+                      <strong>Contents Composition</strong>
+                                  {{=form.custom.widget.ccontentscomposition}}     
+                      </div>   
+                      
+
+                          <div class="row">
+                              <div>
+                                  <strong>TechnicalName</strong>{{=form.custom.widget.TechnicalName}}
+                              </div>
+                        <hr><!--HazDivision-->
+                          <div class="row">
+                            <div class="col-xs-3">
+                              <strong>HazDivision</strong><br>{{=form.custom.widget.HazDivision}}
+                            </div>
+                            <div class="col-xs-3">
+                              <strong>PG Group</strong><br>{{=form.custom.widget.PGgroup}}
+                            </div>
+                            <div class="col-xs-5">
+                              <strong>PSN Descriptor</strong>{{=form.custom.widget.PSNdescriptor}}
+                            </div>
+                          </div>
+                      <div>
+              </div><!-- /.box -->
+                  <div class="box-footer">
+                    
+                 
+                  </div>
+
+              </div><!-- /.box -->
+                        </div>
+             </div>
+                    </div></div>
+            <div class="col-md-6">
+              <!-- Horizontal Form -->
+                <div class="box box-warning">
+                <div class="box-header with-border">
+                  <h3 class="box-title">PSN</h3>
+                </div><!-- /.box-header -->
+                  <div class="box-body">
+
+
+                            <div class="col-xs-5">
+                              <strong>State</strong>{{=form.custom.widget.cstate}}
+                            </div>
+                            <div class="col-xs-5">
+                              <strong>Hazardous Properties</strong>{{=form.custom.widget.chazardousproperties}} 
+                            </div>
+                            <div class="col-xs-1">
+                              <strong>RQ</strong><br>{{=form.custom.widget.RQ}}
+                            </div>
+                            <div class="col-xs-3">
+                              <strong>UNNA</strong><br>{{=form.custom.widget.UNNA}}
+                            </div>
+                            <div class="col-xs-3">
+                              <strong>Descriptors</strong>{{=form.custom.widget.Descriptor}}
+                            </div>
+                            <div class="col-xs-5">
+                              <strong>PSN</strong>{{=form.custom.widget.PSN}}
+                            </div>
+                </div> <!--./box box-info -->   
+
+              <!-- general form elements disabled -->
+              <div class="box box-warning">
+                <div class="box-header with-border">
+                  <h3 class="box-title">Container Elements</h3>
+                </div><!-- /.box-header -->
+                <div class="box-body">
+                    <!-- text input -->
+                    <!--chem gross weight -->
+                    <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-4 ">
+                                  <strong>Chemical Weight lbs.</strong><br>
+                                   <input type="text" class="form-control" placeholder="100.23" disabled>    
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Gross Weight lbs.</strong><br>
+                                      {{=form.custom.widget.grossweight}}                                   
+                              </div>
+                              
+                          </div>
+                      </div><!-- /.box-body -->  
+                     <!--drum size -->
+                    <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-4 ">
+                                  <strong>Container Size</strong><br>
+                                  {{=form.custom.widget.containersize}}    
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Container Volume</strong><br>
+                                      {{=form.custom.widget.containervolume}}                                   
+                              </div>
+                              
+                          </div>
+                      </div><!-- /.box-body -->  
+                      <!--drum construction -->
+                      <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-4 ">
+                                  <strong>Container Construction</strong><br>
+                                  {{=form.custom.widget.containerconstruction}}    
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Container Type</strong><br>
+                                      {{=form.custom.widget.containertype}}                                   
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Container Style</strong><br>
+                                      {{=form.custom.widget.containerstyle}}                                   
+                              </div>
+                          </div>
+                      </div><!-- /.box-body -->   
+                    
+
+         
+                </div><!-- /.box-body -->
+              </div><!-- /.box -->
+            </div><!--/.col (right) -->
+          </div>   <!-- /.row -->
+            
+        </section>
+               <div class="box-footer">
+            <div class=" btn ">{{=cancelbutton}}</div><div class=" pull-right"> {{=form.custom.submit}}</div>
+            {{=form.custom.end}}
+        </div>
+                  
+            <!-- /.content -->

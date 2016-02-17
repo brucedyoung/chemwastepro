@@ -1,0 +1,51 @@
+{{extend 'layout.html'}}
+<script src="{{=URL('static','plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
+<!-- DataTables -->
+<script src="{{=URL('static','plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<!-- SlimScroll -->
+<script src="{{=URL('static','plugins/slimScroll/jquery.slimscroll.min.js')}}"></script>
+<!-- FastClick -->
+<script src="{{=URL('static','plugins/fastclick/fastclick.js')}}"></script>
+
+   <table id="chem-table" class="table table-bordered table-hover dataTable" cellspacing="0" width="100%">
+        <thead>
+            <tr role="row">
+                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">ID</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Chemical Name</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Group</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">State</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Disposal Code</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">TSDF</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Treatment</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Hazard</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">CA Wate Codes</th>
+                    
+                    
+                <th>edit</th>
+            </tr>
+                </thead>
+     </table>
+
+
+
+
+
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#chem-table").DataTable({
+        data:  {{=results}},
+        columns: [
+            { data: 'id' },
+            { data: 'chemname' },
+            { data: 'cgroup' },
+            { data: 'cstate' },
+            { data: 'cdisposalcode' },
+            { data: 'tsdf' },
+            { data: 'treatment' },
+            { data: 'chazard' },
+            { data: 'chazwastecodes' },
+            { data: 'editlink' },
+        ]
+    })
+});
+</script>

@@ -1,0 +1,82 @@
+{{extend 'layout.html'}}
+
+ {{=form.custom.begin}}
+            <!--<form role="form">-->
+              <div class="box-body">
+                <div class="form-group">
+                    <!-- Horizontal Form -->
+              <div class="box box-info">
+                <!-- form start -->
+                <form class="form-horizontal">
+                  <div class="box-body">
+                    <div class="form-group">
+                         <div class="box-body no-padding">
+              <table class="table">
+                <tr>
+                  <td  style="width: 100px"><label>Prefix</label>{{=form.custom.widget.cprefix}}</td>
+                    <td><label>Chemical Name</label> {{=form.custom.widget.chemname}}</td>
+                    <td  style="width: 200px"><label>CAS</label> {{=form.custom.widget.casnum}}</td>
+                </tr>
+              </table>
+              <table class="table">
+                <tr>
+                    <td><label>Group</label> {{=form.custom.widget.cgroup}}</td>
+                    <td><label>State</label> {{=form.custom.widget.cstate}}</td>
+                    <td><label>DOT PSN</label> <br>{{=form.custom.widget.cDOTPSN}}</td>
+                </tr>
+                <tr>
+                    <td>    <div><label>Hazard</label>{{=form.custom.widget.chazard}}</div>  </td>
+                    <td><label>Reorder</label>
+                     </td>
+                  <td>
+                      <label>Pack Type</label>{{=form.custom.widget.cpacktype}}
+                  </td>
+ <td>
+     <label> Treatment</label>{{=form.custom.widget.treatment}}
+                  </td>
+                </tr>
+                <tr>
+                  <td><label>Components</label>
+                  {{=form.custom.widget.components}}</td></td>
+                  <td> <label>Comments</label>
+                  {{=form.custom.widget.comments}}</td>
+                  <td>
+                    <div class="progress progress-xs progress-striped active">
+                      <div class="progress-bar progress-bar-success" style="width: 90%"></div>
+                    </div>
+                  </td>
+                  <td><span class="badge bg-green">90%</span></td>
+                </tr>
+              </table>                       
+            </div> 
+            <!-- /.box-body -->
+          </div>
+     
+                        
+        
+                        
+                        
+                        
+                 
+                  </div><!-- /.box-body -->
+                
+                  <div class="box-footer">
+                    <button type="submit" class="btn btn-default">Cancel</button>
+                    <button type="submit" class="btn btn-info pull-right">Save</button>
+                  </div><!-- /.box-footer -->
+                </form>
+              </div><!-- /.box -->
+                    
+                    
+                    
+                    
+                     
+
+              <div class="box-footer">
+                {{=form.custom.submit}}
+              </div>
+            <!--</form>-->
+          </div>
+          <!-- /.box -->
+      
+          {{=form.custom.end}}<!-- /.form -->

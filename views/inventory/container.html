@@ -1,0 +1,42 @@
+{{extend 'layout.html'}}
+<div class="web2py_search_actions">Containers</div>
+<!-- DataTables -->
+<script src="{{=URL('static','plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
+<!-- DataTables -->
+<script src="{{=URL('static','plugins/datatables/jquery.dataTables.min.js')}}"></script>
+<!-- SlimScroll -->
+<script src="{{=URL('static','plugins/slimScroll/jquery.slimscroll.min.js')}}"></script>
+<!-- FastClick -->
+<script src="{{=URL('static','plugins/fastclick/fastclick.js')}}"></script>
+
+   <table id="shipment-table" class="table table-bordered table-hover dataTable" cellspacing="0" width="100%">
+        <thead>
+            <tr role="row">
+                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">ID</th>
+                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">Cont #</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">PSN</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Open Date</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Close Date</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Disposal Code</th>
+                <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Shipment</th>
+                <th>edit</th>
+            </tr>
+                </thead>
+     </table>
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#shipment-table").DataTable({
+        data:  {{=results}},
+        columns: [
+            { data: 'id' },
+            { data: 'ContNum' },
+            { data: 'PSN' },
+            { data: 'OpenDate' },
+            { data: 'CloseDate' },
+            { data: 'cdisposalcode' },
+            { data: 'cShipment' },
+            { data: 'editlink' },
+        ]
+    })
+});
+</script>

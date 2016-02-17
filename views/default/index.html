@@ -1,0 +1,152 @@
+{{left_sidebar_enabled,right_sidebar_enabled=False,('message' in globals())}}
+{{extend 'layout.html'}}
+
+
+        <!-- Main content -->
+        <section class="content">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-aqua">
+                <div class="inner">
+                  <h3>{{=itemcount}}</h3>
+                  <p>Items</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-bag"></i>
+                </div>
+                <a href={{=URL('inventory','item')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-green">
+                <div class="inner">
+                  <h3>{{=containercount}}</h3>
+                  <p>Containers</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href={{=URL('inventory','container')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-yellow">
+                <div class="inner">
+                  <h3>{{=shipmentcount}}</h3>
+                  <p>Shipments</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-person-add"></i>
+                </div>
+                <a href={{=URL('inventory','shipment')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+            <div class="col-lg-3 col-xs-6">
+              <!-- small box -->
+              <div class="small-box bg-red">
+                <div class="inner">
+                  <h3>{{=chemindexcount}}</h3>
+                  <p>Chemical Index</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-pie-graph"></i>
+                </div>
+                <a href={{=URL('inventory','chemindex')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
+              </div>
+            </div><!-- ./col -->
+          </div><!-- /.row -->
+          
+
+        </section><!-- /.content -->
+
+
+
+Chemical Waste Management Program
+<ol>
+  <li>{{=T('Tracks waste related data such as federal and state waste codes, treatment options, and inventories.')}}</li>
+  <li>{{=T('Performs waste manifest tracking and reporting.')}}</li>
+  <li>{{=T('Generates the Uniform Hazardous Waste Manifest form.')}} <a href={{=URL('default','generate')}}>Example Manifest</a></li>
+  <li>{{=T('Summarizes data for the Biennial Hazardous Waste Report.')}}</li>
+</ol>
+<div id="accordion">
+  <h3>Introduction</h3>
+  <div>
+    <p>
+    This web application is intended to be a stand-alone Chemical Waste Management Program (ChemWastePro) for small organizations, particulary colleges and universities. It is designed to be as open and accessible as possible, for organizations to set-up and start using easily. Even if an organization does not want to use the language and framework, the logic and data flow is intended to be well documented for translation into other programming languages or extendability.<br><br>
+    ChemWastePro has an intended audience for hazardous waste management personel, not end-users. ChemWastePro is not a tracking application for materials in satellite acccumulation areas, or labs. A seperate application for end-users using some of the same reference data is planned.
+    </p>
+  </div>
+  <h3>Data</h3>
+  <div>
+    <p>
+    Chemical Index, Item, Shelf, Container, Shipment
+    </p>
+  </div>
+  <h3>Processes</h3>
+  <div>
+    <p>
+    Assign Shelf, Assign Container, Assign Shipment
+    </p>
+    <ul>
+      <li>List item one</li>
+      <li>List item two</li>
+      <li>List item three</li>
+    </ul>
+  </div>
+      <h3>Data flow</h3>
+  <div>
+    <p>
+        The normal data flow is from Item->Container->Shipment<br>
+        But there may be exceptions to the normal flow:
+      <ul>
+      <li>The waste item may be accumulated on a shelf before put in container</li>
+      <li>The Item may be disposed of in local municipal waste, and never make it into a containter</li>
+      <li>A container may be created without any items, i.e., a bulk container.</li>
+      <li>A shipment may be created without any containers, i.e., a bulk shipment like asbestos, or using an outside vendor</li>
+    </ul>
+    </p>
+   
+  </div>
+  <h3>Technology</h3>
+  <div>
+    <p>- Python - </p>
+    <p>- web2py</p>
+    <p>- Bootstrap template by Alamseed Studio https://almsaeedstudio.com/preview</p>
+    <p>- Javascript libabry by Dymo http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/</p>
+  </div>
+<div>
+    <p>
+    The choice of Python, although there are faster languages, for this project was to have the code be easy to read and modify.<br>
+    The web2py web application framework was chosen because it provides several utilites, while still supporting methods written in pure Python. In particular, the database abstraction layer (DAL), forms, templates, and authentication/access features can be leveraged, allowing the programmer to focus on the business logic. Web2py is a Model-View-Controller (MVC) framework, and the model (database) and views are the web2py specific portions in this application.
+    </p>
+    <p>
+        Web2py has many security features built-in, http://www.web2py.com.ar/examples/default/security
+    </p>
+    <p>
+        <h3>Security Concerns</h3> - There are several points to keep in mind running this application<br>
+        1. Web2py relies on the OS and libraries to be secure. On Linux use automatic updates to keep Apache, SSL, and Python libraries up-to-date. On Windows you will have to keep non-OS portions up-to-date manually.<br>
+        2. Web2py makes an effort to be secure in it's interfaces. When you step away from those interfaces is when you have problems. For instance, if you make direct SQL calls to the database, bypassing the DAL. Use the Web2py authorization if possible. <br>
+        3. Exposing services like REST or SOAP bypasses the authentication/authorization scheme, so be careful how they are exposed. This application provides examples.<br>
+        4. Web2py includes libraries like JQuery. Either link to the external source, or if you have the library local, keep the library up-to-date. Web2py does not include all the Bootstrap libraries, which this application uses. Web2py and OS updates will not keep those current. You must keep track of them.
+    
+      
+    </p>
+    <p> <h3>Database Normalization</h3>
+        There are two methods that break database normalization in this application. These are used to reduce the number and complexity of tables.<br>
+        1. "Is in set" contraints - Instead of a reference field, a drop-down is displayed of possible values.<br>
+        This is relatively safe, because the value is used instead of the foreign key.<br>
+        The value list takes the place of a child table.<br>
+        For example, State = "Liquid, Solid, Gas"<br><br>
+        2. list fields - a list of the related foreign keys is stored in the field.<br>
+        This can be dangerous, because there is no cascade delete, and if the child table record is deleted, thre can be an orphan record in the list.<br>
+        The mitigation is to not allow any user edit to the child tables.<br>
+        The list field takes the place of an intermediate table.<br>
+        For example, hazard = "5|6|10|13"
+        
+    </p>
+  </div>
+</div>
