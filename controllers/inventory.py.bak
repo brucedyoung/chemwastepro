@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # try something like
+from cwp_htmlhelpers import cwpeditlink
+
 def index():
     PageHeader = ""
     #grid = SQLFORM.grid(db.item)
@@ -15,7 +17,7 @@ def item():
     
     #icon="""<div class="col-md-3 col-sm-4">"""+"""<a href="""+URL('inventory','itemedit')+"""/%s><i class="fa fa-fw fa-edit"></i></div></a>"""
     #editlink=""" <a href="""+URL('inventory','containeredit')+""""class=\"fa fa-fw fa-edit\">Edit</%s>"""
-    editlink = """<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
+    editlink = "yo"#cwpeditlink("inventory","itemedit")#"""<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
     #editlink="""<a href="""+URL('inventory','containeredit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     #datatables
     #http://www.pyguy.com/web2py/web2py-tutorial-using-the-datatable-jquery-grid-plugin-with-web2py/
@@ -135,19 +137,13 @@ def shipmentedit():
        redirect(URL(form.errors))
        response.flash = 'form has errors'
 
-def render_docs(ids,row):
-      doc=""
-      for id in ids:
-         doc = doc+db.hazard(id).hazardabbrev+" "#db.wbdocuments(id)
-
-
-      return doc
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form)
 
 def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
-    db.chemindex.chazard.represent = render_docs
+    #db.chemindex.chazard.represent = render_docs
     rows = db(db.chemindex.id>0).select()
     chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,cgroup=r.cgroup,cstate=r.cstate,cdisposalcode=r.cdisposalcode,tsdf=r.tsdf,treatment=r.treatment,chazwastecodes=r.chazwastecodes,chazard=r.chazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))

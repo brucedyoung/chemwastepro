@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 # try something like
+from cwp_htmlhelpers import cwpeditlink
+
 def index():
     PageHeader = ""
     #grid = SQLFORM.grid(db.item)

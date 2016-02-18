@@ -111,13 +111,24 @@ Chemical Waste Management Program
     </p>
    
   </div>
-  <h3>Technology</h3>
-  <div>
-    <p>- Python - </p>
-    <p>- web2py</p>
-    <p>- Bootstrap template by Alamseed Studio https://almsaeedstudio.com/preview</p>
-    <p>- Javascript libabry by Dymo http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/</p>
-  </div>
+
+<!-- ============================================================= -->
+
+<section id="dependencies">
+  <h2 class="page-header"><a href="#dependencies">Dependencies</a></h2>
+  <p class="lead">ChemWastePro is built with Python on the web2py web application framework. The views are built with Admin LTE, which depends on Bootstrap. As many dependancies as possible are included the application package. Additional dependancies are documented in the installation notes.
+    </p>
+  <ul class="bring-up">
+    <li><a href="http://www.web2py.com/" target="_blank">web2py</a></li>
+    <li><a href="https://almsaeedstudio.com" target="_blank">Almsaeed Studio AdminLTE</a></li>
+    <li><a href="http://getbootstrap.com" target="_blank">Bootstrap 3</a></li>
+    <li><a href="http://jquery.com/" target="_blank">jQuery 1.11+</a></li>
+    <li><a href=" http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/" target="_blank">Dymo Javascript library</a></li>
+    <li><a href="#plugins">All other plugins are listed below</a></li>
+  </ul>
+</section>
+
+<!-- ============================================================= -->
 <div>
     <p>
     The choice of Python, although there are faster languages, for this project was to have the code be easy to read and modify.<br>
@@ -150,6 +161,3 @@ Chemical Waste Management Program
     </p>
   </div>
 </div>
-
-
-{{=content}}
