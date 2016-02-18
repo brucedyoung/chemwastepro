@@ -124,7 +124,6 @@ Chemical Waste Management Program
     <li><a href="http://getbootstrap.com" target="_blank">Bootstrap 3</a></li>
     <li><a href="http://jquery.com/" target="_blank">jQuery 1.11+</a></li>
     <li><a href=" http://developers.dymo.com/2010/06/02/dymo-label-framework-javascript-library-samples-print-a-label/" target="_blank">Dymo Javascript library</a></li>
-    <li><a href="#plugins">All other plugins are listed below</a></li>
   </ul>
 </section>
 
@@ -147,6 +146,8 @@ Chemical Waste Management Program
       
     </p>
     <p> <h3>Database Normalization</h3>
+<a href="{{=URL('static','dbgraph.pdf')}}">Database Entity Diagram</a>
+
         There are two methods that break database normalization in this application. These are used to reduce the number and complexity of tables.<br>
         1. "Is in set" contraints - Instead of a reference field, a drop-down is displayed of possible values.<br>
         This is relatively safe, because the value is used instead of the foreign key.<br>
