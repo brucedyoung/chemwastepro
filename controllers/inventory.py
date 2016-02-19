@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 # try something like
+from gluon.custom_import import track_changes; track_changes(True)
 from cwp_htmlhelpers import cwpeditlink
 
 def index():
@@ -13,8 +14,6 @@ def item():
     #enterbutton = """<button onclick="document.location=\""""+URL("admin","default","design", args=request.application)+""">admin</button>"""
     addbutton = """<a href ="""+URL("inventory","itemedit")+""" class="btn btn-block btn-success">Add </a>"""
    
-  
-    
     #icon="""<div class="col-md-3 col-sm-4">"""+"""<a href="""+URL('inventory','itemedit')+"""/%s><i class="fa fa-fw fa-edit"></i></div></a>"""
     #editlink=""" <a href="""+URL('inventory','containeredit')+""""class=\"fa fa-fw fa-edit\">Edit</%s>"""
     editlink = """<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
@@ -30,10 +29,11 @@ def item():
 
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(item))
 
+
 def itemedit():
     PageHeader = "Item"
-    fields=['Iname', 'Iquantity', 'Ireceptacle', 'Icondition', 'Icapacity', 'Iamount', 'Iunits', 'Icomponents', 'Icomments', 'Icontainer', 'Ishelf']
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
+    fields=['Iname', 'Iquantity', 'Ireceptacle', 'Icondition', 'Icapacity', 'Iamount', 'Iunits', 'Icomponents', 'Icomments', 'Icontainer', 'Ishelf']
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
@@ -68,25 +68,21 @@ def container():
     #icon="""<a href="""+URL('inventory','containeredit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","containeredit")+""" class="btn btn-block btn-success">Add </a>"""
     editlink = """<a href ="""+URL("inventory","containeredit")+"""/%s class="fa fa-fw fa-edit"></a>"""
-    container = json.dumps([dict(id=r.id,ContNum=r.ContNum,PSN=r.PSN,OpenDate=str(r.OpenDate),CloseDate=str(r.CloseDate),cdisposalcode=r.cdisposalcode,cShipment=r.cShipment,editlink=editlink  % r.id) for r in rows.render()])#adding render to use represented view of fields
+    container = json.dumps([dict(id=r.id,contnum=r.contnum,PSN=r.PSN,OpenDate=str(r.OpenDate),CloseDate=str(r.CloseDate),cdisposalcode=r.cdisposalcode,cShipment=r.cShipment,editlink=editlink  % r.id) for r in rows.render()])#adding render to use represented view of fields
     #form = SQLFORM(db.shipment,editable=True,)
 
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(container))
+
 def containeredit():
     cancelbutton = XML( """<a href ="""+URL("inventory","container")+""" class="btn btn-block btn-warning">Cancel </a>""")
-    record = db.container(request.args(0)) or redirect(URL('index'))
-    fields=['PSN', 'OpenDate', 'CloseDate', 'Chemweight', 'grossweight', 'cdisposalcode', 'Profile', 'tsdf', 'containertype', 'containersize', 'containerstyle','containervolume','containerconstruction','ClosedBy','cShipment','cgenerator','cCAwastecode','cstatefedwastecode','AccumulationStartDate','ccontentscomposition','cstate','chazardousproperties','RQ','UNNA','Descriptor','TechnicalName','HazDivision','PGgroup','PSNdescriptor']
-    form = SQLFORM(db.container, record,fields=fields)
-    if (request.args(0)):
+    fields=['PSN', 'OpenDate', 'CloseDate', 'Chemweight', 'grossweight', 'cdisposalcode', 'Profile', 'tsdf', 'containertype', 'containersize', 'containerstyle','containervolume','containerconstruction','ClosedBy','cShipment','cgenerator','cCAwastecode','cstatefedwastecode','AccumulationStartDate','ccontentscomposition','cstate', 'chazardousproperties','RQ','UNNA','Descriptor','TechnicalName','HazDivision','PGgroup','PSNdescriptor','contnum']
+    if (request.args(0)): #UPDATE RECORD
         record = db.container(request.args(0)) or redirect(URL('error'))
         form = SQLFORM(db.container, record,fields=fields)
-        #redirect(URL('container'))
-    else:
+    else: #or INSERT RECORD
         form = SQLFORM(db.container,fields=fields)
-        disposalcode  = ''
-        #redirect(URL('container'))
     form.add_button('Back', URL('other_page'))
-    
+    #process form
     if form.process().accepted:
        response.flash = 'form accepted'
        try:

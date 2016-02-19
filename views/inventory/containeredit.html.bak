@@ -22,7 +22,7 @@
                       <div class="box-body">
                           <div class="row">
                             <div class="col-xs-5">
-                                <strong>Profile</strong> {{=form.custom.widget.Profile}}
+                                <strong>Profile</strong> {{=form.custom.widget.Profile}}{{=form.custom.widget.contnum}}
                             </div>
                             <div class="col-xs-5">
                                 <strong>Shipment/Manifest</strong>{{=form.custom.widget.cShipment}}
@@ -89,10 +89,7 @@
                               <strong>PSN Descriptor</strong>{{=form.custom.widget.PSNdescriptor}}
                             </div>
                           </div>
-
-   
                       <div>
-
               </div><!-- /.box -->
                   <div class="box-footer">
                     

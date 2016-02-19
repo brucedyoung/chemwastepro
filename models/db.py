@@ -261,9 +261,9 @@ db.define_table('generator',
                 Field('address',type='string'),
                 )
 
-#PSN= Proper Shipping Name 
+#PSN= Proper Shipping Name
 db.define_table('container',
-                Field('ContNum','string',default="1000"),#an alphanumeric identifier for container. Regulations say drum number must be unique per shipment
+                Field('contnum','string',default="1000"),#an alphanumeric identifier for container. Regulations say drum number must be unique per shipment
                 Field('PSN','reference PSN'),
                 Field('OpenDate','date'),
                 Field('CloseDate','date'),
@@ -295,7 +295,7 @@ db.define_table('container',
                 Field('chazardousproperties','list:string', requires = IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True)),
                
                 
-                format='%(ContNum)s'
+                format='%(contnum)s'
                )
 #db.container.cstatefedwastecode.widget = multiselect_widget
 db.container.tsdf.requires = IS_EMPTY_OR(IS_IN_DB(db,'tsdf.id','%(tsdfname)s'))
@@ -340,7 +340,7 @@ db.item.Istate.requires=IS_IN_SET(('Solid','Liquid','Gas'))
 db.item.Iname.requires = IS_IN_DB(db,'chemindex.id','%(chemname)s')
 db.item.disposalcode = Field.Lazy(lambda r: db.chemindex[r['Iname']].cdisposalcode),
 db.item.Ishelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
-db.item.Icontainer.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(ContNum)s')), #allow container ID to be empty 
+db.item.Icontainer.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(contnum)s')), #allow container ID to be empty 
 db.item.Icontainer.widget = SQLFORM.widgets.options.widget #make drop-down list    
 db.item.Iunits.requires = IS_EMPTY_OR(IS_IN_DB(db,'units.id','%(name)s')), #allow units to be empty
 db.item.Iunits.widget = SQLFORM.widgets.options.widget #make drop-down list
