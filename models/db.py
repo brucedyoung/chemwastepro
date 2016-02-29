@@ -213,6 +213,7 @@ db.define_table('chemindex',
 #db.chemindex.chazard.requires = IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True)
 db.chemindex.cpacktype.requires=IS_IN_SET(('','LP','BU'))
 db.chemindex.tsdf.requires = IS_IN_DB(db,'tsdf.id','%(tsdfname)s')
+db.chemindex.treatment.requires = IS_EMPTY_OR(IS_IN_DB(db,'treatment.id','%(treatnameabbrev)s'))
 #db.chemindex.ControlledSubstance.requires=IS_IN_SET((0,1,2,3))
 db.chemindex.cgroup.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic')))# IN = Inorganic, OR = Organic
 db.chemindex.cstate.requires=IS_EMPTY_OR(IS_IN_SET(('Solid','Liquid','Gas')))

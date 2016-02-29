@@ -1,4 +1,14 @@
 {{extend 'layout.html'}}
+<!--Include DYMO.Label.Framework.js for label printing-->
+<script src="{{=URL('static','js/DYMO.Label.Framework.js')}}" type="text/javascript" charset="UTF-8"></script>
+<script src="{{=URL('static','js/PrintLabel.js')}}" type="text/javascript" charset="UTF-8"></script>
+
+
+
+<button id="printButton" style="background-color:transparent; border-color:transparent;"> 
+  <img src="{{=URL('static','images/LabelPrinter32x32.gif')}}" width="32" height="32"/>
+</button>
+
 <!-- Main content -->
 {{=form.custom.begin}}
     <section class="content">
@@ -11,10 +21,12 @@
                 <div class="box box-success">
                     <div class="box-body">
                         <div class="form-group">
+                            
                             <label>Chemical Name</label>
+     
                             <div>{{=form.custom.widget.Iname}}</div>
                             <p class="help-block">{{=disposalcode}}</p>
-                            <!--<p class="help-block">{{=form.custom.inpval.Iname.cgroup[:2].upper()}}-{{=form.custom.inpval.Iname.cstate}}</p>-->
+                            
                         </div>
                         <div class="col-xs-3">
                             <label>Quantity</label>
@@ -49,6 +61,9 @@
                             <label>Container</label>
                             <div>{{=form.custom.widget.Icontainer}}</div>
                         </div><!-- ./two column --> 
+                        
+
+                        
                     </div><!-- End box-body-->
                 </div> <!-- End box box-success-->
             </div><!-- End column1-->
@@ -118,10 +133,17 @@
             
         </div><!-- /.row -->
         <div class="box-footer">
-            <div class=" btn ">{{=cancelbutton}}</div><div class=" pull-right"> {{=form.custom.submit}}</div>
+            <div class=" btn ">{{=cancelbutton}}</div>
+<div class=" pull-right"> {{=form.custom.submit}}</div>
         </div>
     </div><!-- /.content -->
 
+
+
        
 {{=form.custom.end}}<!-- /.form -->    
+
+        <label for="textTextArea">Label text:</label><br/>
+        <textarea name="textTextArea" id="textTextArea"  rows='5' cols='40'>{{=labeltext}}</textarea>
+    </div>
             <!-- </form>-->

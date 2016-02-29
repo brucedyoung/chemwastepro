@@ -38,9 +38,11 @@ def itemedit():
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
         form = SQLFORM(db.item, record,fields=fields)
+        labeltext = "Hazardous Waste    Accum. Date: "+"1-1-1907"+"\n"+"Item: "+str(record.id)+"             "+"Shelf:"+str(record.Ishelf.shelfcode)+"\n"+str(record.Iname.chemname)+"\n"+str(record.Idisposalcode)#Dymo Label
     else:
         form = SQLFORM(db.item,fields=fields)
         disposalcode  = ''
+        labeltext = ''
     form.add_button('Back', URL('other_page'))
     #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
     #Eplicitly list fields. When using {{=form.custom.widget.Ireceptacle}}, it will only show and edit listed fields
@@ -58,9 +60,8 @@ def itemedit():
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-
-
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode)
+    #labeltext = "\n"
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext)
 
 def container():
     PageHeader = "Container"
