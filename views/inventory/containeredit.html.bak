@@ -22,10 +22,10 @@
                       <div class="box-body">
                           <div class="row">
                             <div class="col-xs-5">
-                                <strong>Profile</strong> {{=form.custom.widget.Profile}}{{=form.custom.widget.contnum}}
+                                <strong>Profile</strong> {{=form.custom.widget.profile}}<!--{{=form.custom.widget.contnum}}-->
                             </div>
                             <div class="col-xs-5">
-                                <strong>Shipment/Manifest</strong>{{=form.custom.widget.cShipment}}
+                                <strong>Shipment/Manifest</strong>{{=form.custom.widget.shipment}}
                             </div>
                           </div>
                       </div><!-- /.box-body --> <!-- End generator stuff-->  
@@ -34,7 +34,7 @@
                       <div class="box-body">
                           <div class="row">
                             <div class="col-xs-3">
-                              <strong>Generator</strong> {{=form.custom.widget.cgenerator}}
+                              <strong>Generator</strong> {{=form.custom.widget.generator}}
                             </div>
                             <div class="col-xs-4">
                               <strong>EPA ID No.</strong><br>
@@ -52,44 +52,46 @@
                       </div><!-- /.box-body --> <!-- End generator stuff-->
                       <div>
                       <strong>EPA Waste No.</strong>
-                                  {{=form.custom.widget.cstatefedwastecode}}     
+                                  {{=form.custom.widget.fedwastecode}}     
                       </div>    
 
                       <div class="box-body">
                           <div class="row">
                               <div class="col-xs-3 ">
-                                  <strong>CA Waste No.</strong><br>
-                                  {{=form.custom.widget.cCAwastecode}}                                  
+                                  <strong>State Waste No.</strong><br>
+                                  {{=form.custom.widget.statewastecode}}                                  
                               </div>
                               <div class="col-xs-5">
                                   <strong>Accumulation Start Date</strong><br>
-                                  {{=form.custom.widget.AccumulationStartDate}}     
+                                  {{=form.custom.widget.accumulationstartdate}}     
                               </div>
                           </div>
                       </div><!-- /.box-body -->  
                       <div>
-                      <strong>Contents Composition</strong>
-                                  {{=form.custom.widget.ccontentscomposition}}     
-                      </div>   
-                      
-
-                          <div class="row">
-                              <div>
-                                  <strong>TechnicalName</strong>{{=form.custom.widget.TechnicalName}}
-                              </div>
-                        <hr><!--HazDivision-->
-                          <div class="row">
-                            <div class="col-xs-3">
-                              <strong>HazDivision</strong><br>{{=form.custom.widget.HazDivision}}
-                            </div>
-                            <div class="col-xs-3">
-                              <strong>PG Group</strong><br>{{=form.custom.widget.PGgroup}}
-                            </div>
-                            <div class="col-xs-5">
-                              <strong>PSN Descriptor</strong>{{=form.custom.widget.PSNdescriptor}}
-                            </div>
-                          </div>
+                          <strong>Contents Composition</strong>
+                          {{=form.custom.widget.contentscomposition}}
+                      </div>
                       <div>
+                          <strong>TechnicalName</strong>
+                          {{=form.custom.widget.technicalname}}
+                      </div>
+                      <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-3">
+                                  <strong>HazDivision</strong><br>{{=form.custom.widget.hazdivision}}
+                              </div>
+                              <div class="col-xs-3">
+                                  <strong>PG Group</strong><br>{{=form.custom.widget.pggroup}}
+                              </div>
+                              <div class="col-xs-5">
+                                  <strong>PSN Descriptor</strong>{{=form.custom.widget.psndescriptor}}
+                              </div>
+                          </div>
+                      </div>
+
+               <div>              
+                 <div>
+                          
               </div><!-- /.box -->
                   <div class="box-footer">
                     
@@ -116,16 +118,16 @@
                               <strong>Hazardous Properties</strong>{{=form.custom.widget.chazardousproperties}} 
                             </div>
                             <div class="col-xs-1">
-                              <strong>RQ</strong><br>{{=form.custom.widget.RQ}}
+                              <strong>RQ</strong><br>{{=form.custom.widget.rq}}
                             </div>
                             <div class="col-xs-3">
-                              <strong>UNNA</strong><br>{{=form.custom.widget.UNNA}}
+                              <strong>UNNA</strong><br>{{=form.custom.widget.unna}}
                             </div>
                             <div class="col-xs-3">
-                              <strong>Descriptors</strong>{{=form.custom.widget.Descriptor}}
+                              <strong>Descriptors</strong>{{=form.custom.widget.descriptor}}
                             </div>
                             <div class="col-xs-5">
-                              <strong>PSN</strong>{{=form.custom.widget.PSN}}
+                              <strong>PSN</strong>{{=form.custom.widget.psn}}
                             </div>
                 </div> <!--./box box-info -->   
 
@@ -141,7 +143,7 @@
                           <div class="row">
                               <div class="col-xs-4 ">
                                   <strong>Chemical Weight lbs.</strong><br>
-                                   <input type="text" class="form-control" placeholder="100.23" disabled>    
+                                  {{=form.custom.widget.chemweight}}  
                               </div>
                               <div class="col-xs-4 ">
                                   <strong>Gross Weight lbs.</strong><br>
@@ -181,7 +183,23 @@
                               </div>
                           </div>
                       </div><!-- /.box-body -->   
-                    
+                             <!--OpenCloseDate -->
+                      <div class="box-body">
+                          <div class="row">
+                              <div class="col-xs-4 ">
+                                  <strong>Open Date</strong><br>
+                                  {{=form.custom.widget.opendate}}    
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Close Date</strong><br>
+                                      {{=form.custom.widget.closedate}}                                   
+                              </div>
+                              <div class="col-xs-4 ">
+                                  <strong>Container Style</strong><br>
+                                 
+                              </div>
+                          </div>
+                      </div><!-- /.box-body -->   
 
          
                 </div><!-- /.box-body -->

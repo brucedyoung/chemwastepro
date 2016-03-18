@@ -147,6 +147,7 @@ Chemical Waste Management Program
     </p>
     <p> <h3>Database Normalization</h3>
 <a href="{{=URL('static','dbgraph.pdf')}}">Database Entity Diagram</a>
+<br>
 
         There are two methods that break database normalization in this application. These are used to reduce the number and complexity of tables.<br>
         1. "Is in set" contraints - Instead of a reference field, a drop-down is displayed of possible values.<br>

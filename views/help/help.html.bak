@@ -11,5 +11,18 @@
     5. The authentication system in the framework can be used, or an external system like CAS, Kerberos, AD, or OpenID can be used.
     6. Any database backend supported by the framework is supported, including MySQL, MS SQL Server, Oracle, SQLite, Postgres.
     7. The business logic is simply coded and commented in seperate methods, and is intended to be understandable to a developer with a medium amount of experience. The database tables are optimized for flexibility and simplicity. 
+    8. Seed data is provided in tables, and the process of updating them is provided.
     
+</p>
+<p>
+    Manifest and Hazardous Waste Label Printing<br>
+
+</p>
+<p>
+    The system supports Dymo labelwriters. These are very inexpensive, reliable label printers, with support for dialog-less printing from a browser.<br>
+    Installing the Labelwriter software includes a listener on port 41951 – 41960<br>
+    The DYMO Label Framework JavaScript Library 2.0 uses this port to directly print to the lablewriter.<br>
+    See: http://developers.dymo.com/category/sdk-samples/<br>
+    It is formatted for: Address label 5 lines<br>
+    Includes header, item number, shelf number, chemical name, disposal code, hazards, accumulation date, and item number barcode 
 </p>

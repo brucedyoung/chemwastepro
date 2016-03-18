@@ -32,12 +32,12 @@ $(document).ready(function(){
         data:  {{=results}},
         columns: [
             { data: 'id' },
-            { data: 'ContNum' },
-            { data: 'PSN' },
-            { data: 'OpenDate' },
-            { data: 'CloseDate' },
-            { data: 'cdisposalcode' },
-            { data: 'cShipment' },
+            { data: 'contnum' },
+            { data: 'psn' },
+            { data: 'opendate' },
+            { data: 'closedate' },
+            { data: 'disposalcode' },
+            { data: 'shipment' },
             { data: 'editlink' },
         ]
     })

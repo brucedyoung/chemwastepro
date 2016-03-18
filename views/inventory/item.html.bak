@@ -1,5 +1,5 @@
 {{extend 'layout.html'}}
-<small>{{=addbutton}}</small>
+
               <table  width="100">
                   <tr><td>{{=addbutton}}</td></tr>
               </table>
@@ -38,11 +38,11 @@ $(document).ready(function(){
         data:  {{=results}},
         columns: [
             { data: 'id' },
-            { data: 'Iname' },
-            { data: 'Idisposalcode' },
-            { data: 'Ipounds' },
+            { data: 'name' },
+            { data: 'disposalcode' },
+            { data: 'pounds' },
             { data: 'Icontainer' },
-            { data: 'Ishelf' },
+            { data: 'shelf' },
             { data: 'editlink' },
         ]
     })
