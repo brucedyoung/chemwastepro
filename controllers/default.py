@@ -119,3 +119,16 @@ def call():
     supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
     """
     return service()
+
+def month_selector():
+    if not request.vars.month: return ''
+    months = ['January', 'February', 'March', 'April', 'May',
+              'June', 'July', 'August', 'September' ,'October',
+              'November', 'December']
+    month_start = request.vars.month.capitalize()
+    selected = [m for m in months if m.startswith(month_start)]
+    return DIV(*[DIV(k,
+                     _onclick="jQuery('#month').val('%s')" % k,
+                     _onmouseover="this.style.backgroundColor='yellow'",
+                     _onmouseout="this.style.backgroundColor='white'"
+                     ) for k in selected])

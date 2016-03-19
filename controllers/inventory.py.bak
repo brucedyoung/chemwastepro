@@ -40,7 +40,8 @@ def item():
 def itemedit():
     PageHeader = "Item"
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
-    fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'Icontainer', 'shelf']
+    fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'container', 'shelf']
+    db.item.name.represent = render_docs
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.disposalcode #<<<<TODO Add onchange event

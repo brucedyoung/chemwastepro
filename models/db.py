@@ -341,6 +341,10 @@ db.define_table('item',
                )
 db.item.state.requires=IS_IN_SET(('Solid','Liquid','Gas'))
 db.item.name.requires = IS_IN_DB(db,'chemindex.id','%(chemname)s')
+#db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
+#db.item.name.widget=SQLFORM.widgets.string.widget
+#db.item.name.widget=SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
+
 #db.item.disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
 #db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
 db.item.container.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(contnum)s')), #allow container ID to be empty 

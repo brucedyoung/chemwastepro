@@ -68,7 +68,7 @@ def generate():
     { 'name': 'Manifest_Tracking_Number', 'type': 'T', 'x1': 157.0, 'y1': 40.5, 'x2': 12.0, 'y2': 12.0, 'font': 'Arial', 'size': 12.0, 'bold': 1, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, },
     { 'name': 'Generator_Name_Address', 'type': 'T', 'x1': 20.0, 'y1': 40, 'x2': 100.0, 'y2': 37.0, 'font': 'Arial', 'size': 10.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, 'multiline' : 3 },
     { 'name': 'Generator_Site_Address', 'type': 'T', 'x1': 115.0, 'y1': 40, 'x2': 180.0, 'y2': 37.0, 'font': 'Arial', 'size': 10.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, 'multiline' : 3 },
-    { 'name': 'Generator_Name_Phone', 'type': 'T', 'x1': 35.0, 'y1': 47, 'x2': 180.0, 'y2': 37.0, 'font': 'Arial', 'size': 10.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, 'multiline' : 3 },
+    { 'name': 'Generator_Name_Phone', 'type': 'T', 'x1': 35.0, 'y1': 49, 'x2': 180.0, 'y2': 37.0, 'font': 'Arial', 'size': 10.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, 'multiline' : 3 },
     { 'name': 'line1', 'type': 'L', 'x1': 100.0, 'y1': 25.0, 'x2': 100.0, 'y2': 57.0, 'font': 'Arial', 'size': 0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': None, 'priority': 3, },
     { 'name': 'barcode', 'type': 'BC', 'x1': 20.0, 'y1': 246.5, 'x2': 140.0, 'y2': 254.0, 'font': 'Interleaved 2of5 NT', 'size': 0.75, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '200000000001000159053338016581200810081', 'priority': 3, },
 ]
@@ -119,3 +119,24 @@ def call():
     supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
     """
     return service()
+
+def month_selector():
+    if not request.vars.month: return ''
+    months = ['January', 'February', 'March', 'April', 'May',
+              'June', 'July', 'August', 'September' ,'October',
+              'November', 'December']
+    month_start = request.vars.month.capitalize()
+    selected = [m for m in months if m.startswith(month_start)]
+    return DIV(*[DIV(k,
+                     _onclick="jQuery('#month').val('%s')" % k,
+                     _onmouseover="this.style.backgroundColor='yellow'",
+                     _onmouseout="this.style.backgroundColor='white'"
+                     ) for k in selected])
+
+
+
+import json
+def chemindex():
+    chemindexdata =  json.dumps([dict(id=r.id,chemname=r.chemname) for r in rows.render()])#adding render to use represented view of fields
+
+    return chemindexdata
