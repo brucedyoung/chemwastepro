@@ -20,7 +20,7 @@ def item():
     PageHeader = "Item"
     #enterbutton = """<button onclick="document.location=\""""+URL("admin","default","design", args=request.application)+""">admin</button>"""
     addbutton = """<a href ="""+URL("inventory","itemedit")+""" class="btn btn-block btn-success">Add </a>"""
-   
+
     #icon="""<div class="col-md-3 col-sm-4">"""+"""<a href="""+URL('inventory','itemedit')+"""/%s><i class="fa fa-fw fa-edit"></i></div></a>"""
     #editlink=""" <a href="""+URL('inventory','containeredit')+""""class=\"fa fa-fw fa-edit\">Edit</%s>"""
     editlink = """<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
@@ -39,18 +39,21 @@ def item():
 
 def itemedit():
     PageHeader = "Item"
+    chemname=""
+    chemid = 0
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
     fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'container', 'shelf']
-    db.item.name.represent = render_docs
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.disposalcode #<<<<TODO Add onchange event
+        chemname = record.name.chemname
+        chemid = record.name
         form = SQLFORM(db.item, record,fields=fields)
-       
+
     #FIX if there is no shelf
     # labeltext = "Hazardous Waste    Accum. Date: "+"1-1-1907"+"\n"+"Item: "+str(record.id)+"       "+"Shelf:"+str(record.shelf.shelfcode)+"\n"+str(record.name.chemname)+"\n"+str(record.disposalcode)#Dymo Label
         labeltext =''
-    else:
+    else: # ADD RECORD
         form = SQLFORM(db.item,fields=fields)
         disposalcode  = ''
         labeltext = ''
@@ -61,18 +64,16 @@ def itemedit():
     #form = SQLFORM(db.item, record,fields=fields)
 
     if form.process().accepted:
-       response.flash = 'form accepted'
-       try:
+        response.flash = 'form accepted'
+        try:
             record.update_record(**dict(form.vars))#record is updated
             redirect(URL('item'))
-       except NameError:
+        except NameError:
             response.flash = 'record added'
             redirect(URL('item'))
-    elif form.errors:
-       redirect(URL(form.errors))
-       response.flash = 'form has errors'
-    #labeltext = "\n"
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext)
+    elif form.errors: #name is None
+       redirect(URL('item'))
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid)
 
 def container():
     PageHeader = "Container"
@@ -106,10 +107,10 @@ def containeredit():
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-        
-        
-        
-       
+
+
+
+
     return dict(form=form,cancelbutton=cancelbutton,)
 
 def shipment():
@@ -158,19 +159,31 @@ def chemindex():
 
 
 def chemindexedit():
+
     PageHeader = "Chemical Index"
     fields=['chemname', 'prefix', 'casnum', 'group', 'state', 'disposalcode', 'packtype', 'treatment', 'hazwastecodes', 'hazard', 'components','comments']
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
         #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
         form = SQLFORM(db.chemindex, record,fields=fields)
+
+        hprint=''
+        #hlist=str(record.hazard)
+        for number in record.hazard:
+            #row = db(db.chemindex.id == int(request.vars.name)).select().first()
+            row = db(db.hazard.id == int(number)).select().first()
+            hprint=hprint+row.hazardabbrev
+        #hazrows = db.hazard.id.contains(hlist, all=True)
+        #recid = row.group[:2].upper()+'-'+row.state.upper()+hprint
+
+
     else:
         form = SQLFORM(db.chemindex,fields=fields)
         disposalcode  = ''
     form.add_button('Back', URL('other_page'))
     cancelbutton = XML( """<a href ="""+URL("inventory","container")+""" class="btn btn-block btn-warning">Cancel </a>""")
 
-    
+
     #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.js'))
     #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.css'))
 
@@ -185,4 +198,4 @@ def chemindexedit():
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form)
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint)

@@ -1,0 +1,460 @@
+(dp1
+S'output'
+p2
+S'<class \'gluon.contrib.pymysql.err.ProgrammingError\'> (1064, u"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'group=\'OR\',treatment=3 WHERE (chemindex.id = 6)\' at line 1")'
+p3
+sS'layer'
+p4
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/controllers/default.py'
+p5
+sS'code'
+p6
+S'# -*- coding: utf-8 -*-\n# this file is released under public domain and you can use without limitations\n\n#########################################################################\n## This is a sample controller\n## - index is the default action of any application\n## - user is required for authentication and authorization\n## - download is for downloading files uploaded in the db (does streaming)\n#########################################################################\n\ndef index():\n    """\n    example action using the internationalization operator T and flash\n    rendered by views/default/index.html or views/generic.html\n\n    if you need a simple wiki simply replace the two lines below with:\n    return auth.wiki()\n    """\n    addbutton =""\n    PageHeader = "Dashboard"\n    #response.flash = T("Hello World")\n    itemcount = db(db.item.id > 0).count()\n    containercount = db(db.container.id > 0).count()\n    shipmentcount = db(db.shipment.id > 0).count()\n    chemindexcount = db(db.chemindex.id > 0).count()\n    return dict(PageHeader=PageHeader,message=T(\'Welcome to OHWM!\'),itemcount=itemcount,containercount=containercount,shipmentcount=shipmentcount,chemindexcount=chemindexcount,addbutton=addbutton)\n\n\ndef user():\n    """\n    exposes:\n    http://..../[app]/default/user/login\n    http://..../[app]/default/user/logout\n    http://..../[app]/default/user/register\n    http://..../[app]/default/user/profile\n    http://..../[app]/default/user/retrieve_password\n    http://..../[app]/default/user/change_password\n    http://..../[app]/default/user/manage_users (requires membership in\n    http://..../[app]/default/user/bulk_register\n    use @auth.requires_login()\n        @auth.requires_membership(\'group name\')\n        @auth.requires_permission(\'read\',\'table name\',record_id)\n    to decorate functions that need access control\n    """\n    return dict(form=auth())\n#pyfpdf elements:\n#name: placeholder identification\n#type: \'T\': texts, \'L\': lines, \'I\': images, \'B\': boxes, \'BC\': barcodes\n#x1, y1, x2, y2: top-left, bottom-right coordinates (in mm)\n#font: ie "Arial"\n#size: text size in points, ie. 10\n#bold, italic, underline: text style (non-empty to enable)\n#foreground, background: text and fill colors, ie. 0xFFFFFF\n#align: text aling, \'L\': left, \'R\': right, \'C\': center\n#text: default string, can be replaced at runtime\n#priority: Z-Order\n#multiline: None for single line (default), True to for multicells (multiples lines), False trims to fit exactly the space defined\n\ndef generate():\n    from gluon.contrib.pyfpdf import Template\n    import os.path\n    elements = [ \n     #letter paper =  215.9 mm x 279.4 mm\n    { \'name\': \'background\', \'type\': \'I\', \'x1\': 3.3, \'y1\': 3.3, \'x2\': 212.6, \'y2\': 276.1, \'font\': None, \'size\': 0.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'logo\', \'priority\': 0, },\n    { \'name\': \'Generator_ID_Number\', \'type\': \'T\', \'x1\': 50.0, \'y1\': 40.5, \'x2\': 12.0, \'y2\': 12.0, \'font\': \'Arial\', \'size\': 12.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, },\n    { \'name\': \'Page_1_of\', \'type\': \'T\', \'x1\': 105.0, \'y1\': 40.5, \'x2\': 12.0, \'y2\': 12.0, \'font\': \'Arial\', \'size\': 0.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, },\n    { \'name\': \'Emergency_Response_Phone\', \'type\': \'T\', \'x1\': 120.0, \'y1\': 40.5, \'x2\': 12.0, \'y2\': 12.0, \'font\': \'Arial\', \'size\': 0.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, },\n    { \'name\': \'Manifest_Tracking_Number\', \'type\': \'T\', \'x1\': 157.0, \'y1\': 40.5, \'x2\': 12.0, \'y2\': 12.0, \'font\': \'Arial\', \'size\': 12.0, \'bold\': 1, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, },\n    { \'name\': \'Generator_Name_Address\', \'type\': \'T\', \'x1\': 20.0, \'y1\': 40, \'x2\': 100.0, \'y2\': 37.0, \'font\': \'Arial\', \'size\': 10.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, \'multiline\' : 3 },\n    { \'name\': \'Generator_Site_Address\', \'type\': \'T\', \'x1\': 115.0, \'y1\': 40, \'x2\': 180.0, \'y2\': 37.0, \'font\': \'Arial\', \'size\': 10.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, \'multiline\' : 3 },\n    { \'name\': \'Generator_Name_Phone\', \'type\': \'T\', \'x1\': 35.0, \'y1\': 49, \'x2\': 180.0, \'y2\': 37.0, \'font\': \'Arial\', \'size\': 10.0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'\', \'priority\': 2, \'multiline\' : 3 },\n    { \'name\': \'line1\', \'type\': \'L\', \'x1\': 100.0, \'y1\': 25.0, \'x2\': 100.0, \'y2\': 57.0, \'font\': \'Arial\', \'size\': 0, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': None, \'priority\': 3, },\n    { \'name\': \'barcode\', \'type\': \'BC\', \'x1\': 20.0, \'y1\': 246.5, \'x2\': 140.0, \'y2\': 254.0, \'font\': \'Interleaved 2of5 NT\', \'size\': 0.75, \'bold\': 0, \'italic\': 0, \'underline\': 0, \'foreground\': 0, \'background\': 0, \'align\': \'I\', \'text\': \'200000000001000159053338016581200810081\', \'priority\': 3, },\n]\n    # self.image("logo.png", x=10, y=8, w=23)\n    f = Template(format="A4",\n             elements = elements,\n             title="Sample Invoice", author="Sample Company",\n             subject="Sample Customer", keywords="Electronic TAX Invoice")\n    f.add_page()\n    \n    #logo=os.path.join(request.env.web2py_path,"static","images","manifest.png")\n     #self.image(logo,10,8,33)\n\n    #f["company_logo"] = os.path.join(request.env.web2py_path, "gluon", "contrib", "pyfpdf", "tutorial", "logo.png"\n    #os.path.join(request.env.web2py_path,request.folder,"static","images","g3001.png")\n    f["background"] = os.path.join(request.env.web2py_path,request.folder,"static","images","manifest.png")\n    #f["background"] = URL(\'static\', \'images\', args="manifest.png")\n    #f["Generator_ID_Number"] = "123456789"\n    #f["company_logo"] = "pyfpdf/tutorial/logo.png"\n    f["Generator_ID_Number"] = "123456789"\n    f["Page_1_of"] = "2"\n    f["Emergency_Response_Phone"] = "510-642-6908"\n    f["Manifest_Tracking_Number"] = "NYB54321"\n    f["Generator_Name_Address"] = "Somewhere, CA, USA\\n123 Anywhere Rd.\\nMain Campus"\n    f["Generator_Name_Phone"] = "510-642-6073"\n    f["Generator_Site_Address"] = "Somewhere, CA, USA\\n123 Anywhere Rd.\\nMain Site"\n\n\n    \n    response.headers[\'Content-Type\']=\'application/pdf\'\n    return f.render(\'invoice.pdf\', dest=\'S\')\n\n\n@cache.action()\ndef download():\n    """\n    allows downloading of uploaded files\n    http://..../[app]/default/download/[filename]\n    """\n    return response.download(request, db)\n\n\ndef call():\n    """\n    exposes services. for example:\n    http://..../[app]/default/call/jsonrpc\n    decorate with @services.jsonrpc the functions to expose\n    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv\n    """\n    return service()\n\ndef month_selector():\n    if not request.vars.month: return \'\'\n    months = [\'January\', \'February\', \'March\', \'April\', \'May\',\n              \'June\', \'July\', \'August\', \'September\' ,\'October\',\n              \'November\', \'December\']\n    month_start = request.vars.month.capitalize()\n    selected = [m for m in months if m.startswith(month_start)]\n    return DIV(*[DIV(k,\n                     _onclick="jQuery(\'#month\').val(\'%s\')" % k,\n                     _onmouseover="this.style.backgroundColor=\'yellow\'",\n                     _onmouseout="this.style.backgroundColor=\'white\'"\n                     ) for k in selected])\n\n\n#must use this for list fields to show rendered value, instead of record ids\ndef render_docs(ids,row):\n      doc=""\n      for id in ids:\n         doc = doc+db.hazard(id).hazardabbrev+" "#db.wbdocuments(id)\n      return doc\n\n\ndef updatedisposalcode():\n    \n    recid = request.vars.name\n    record = db.chemindex(recid)# or redirect(URL(\'error\'))\n    if (record):\n        rdisposalcode = record.disposalcode\n    else:\n        rdisposalcode = ""\n    return rdisposalcode\n    #return "jQuery(\'#target\').html(%s);" % repr(request.vars.name)\n\n    \n    #+\'-\'+\',\'.join(map(lambda v : db.hazard[v].hazardabbrev , r[\'chazard\']))+\'-\'+db.tsdf[r[\'tsdf\']].tsdfname[:3].upper()+\'-\'+db.treatment[r[\'treatment\']].treatnameabbrev.upper()),\n    \n    \n#Format for Select2\ndef getchemindex():\n    rcount=""\n    q = request.vars[\'q\']\n    rows = db(db.chemindex.chemname.contains(q, all=True)).select(db.chemindex.id, db.chemindex.chemname, orderby=db.chemindex.chemname)\n    for idx,row in enumerate(rows):\n        rcount += "{\\"id\\":\\""+str(rows[idx].id)+"\\",\\"text\\":\\""+rows[idx].chemname+"\\"},"\n    if rcount.endswith(","):\n        rcount = rcount[:-1] # remove trailing comma\n    return ("["+rcount+"]")\n\ndef popchemindex():\n    rows = db(db.chemindex.id>0).select(db.chemindex.id) \n    for row in rows:\n        db(db.chemindex.id == row.id).update(group="OR",tsdf=3,treatment=3)\n    return ("done")\n\nresponse._vars=response._caller(popchemindex)\n'
+p7
+sS'snapshot'
+p8
+(dp9
+S'exception'
+p10
+(dp11
+S'__module__'
+p12
+S"'gluon.contrib.pymysql.err'"
+p13
+sS'__getslice__'
+p14
+S"<method-wrapper '__getslice__' of ProgrammingError object>"
+p15
+sS'__str__'
+p16
+S"<method-wrapper '__str__' of ProgrammingError object>"
+p17
+sS'__reduce__'
+p18
+S'<built-in method __reduce__ of ProgrammingError object>'
+p19
+sS'__dict__'
+p20
+S'{}'
+p21
+sS'__sizeof__'
+p22
+S'<built-in method __sizeof__ of ProgrammingError object>'
+p23
+sS'__weakref__'
+p24
+S'None'
+p25
+sS'__init__'
+p26
+S"<method-wrapper '__init__' of ProgrammingError object>"
+p27
+sS'__setattr__'
+p28
+S"<method-wrapper '__setattr__' of ProgrammingError object>"
+p29
+sS'__reduce_ex__'
+p30
+S'<built-in method __reduce_ex__ of ProgrammingError object>'
+p31
+sS'__new__'
+p32
+S'<built-in method __new__ of type object>'
+p33
+sS'__format__'
+p34
+S'<built-in method __format__ of ProgrammingError object>'
+p35
+sS'__class__'
+p36
+S"<class 'gluon.contrib.pymysql.err.ProgrammingError'>"
+p37
+sS'__doc__'
+p38
+S"'Exception raised for programming errors, e.g. ta...t, wrong number\\n    of parameters specified, etc.'"
+p39
+sS'__getitem__'
+p40
+S"<method-wrapper '__getitem__' of ProgrammingError object>"
+p41
+sS'__setstate__'
+p42
+S'<built-in method __setstate__ of ProgrammingError object>'
+p43
+sS'__getattribute__'
+p44
+S"<method-wrapper '__getattribute__' of ProgrammingError object>"
+p45
+sS'args'
+p46
+S'(1064, u"You have an error in your SQL syntax; check th...,treatment=3 WHERE (chemindex.id = 6)\' at line 1")'
+p47
+sS'__subclasshook__'
+p48
+S'<built-in method __subclasshook__ of type object>'
+p49
+sS'__unicode__'
+p50
+S'<built-in method __unicode__ of ProgrammingError object>'
+p51
+sS'__delattr__'
+p52
+S"<method-wrapper '__delattr__' of ProgrammingError object>"
+p53
+sS'__repr__'
+p54
+S"<method-wrapper '__repr__' of ProgrammingError object>"
+p55
+sS'__hash__'
+p56
+S"<method-wrapper '__hash__' of ProgrammingError object>"
+p57
+ssS'evalue'
+p58
+S'(1064, u"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'group=\'OR\',treatment=3 WHERE (chemindex.id = 6)\' at line 1")'
+p59
+sS'request'
+p60
+cgluon.html
+XML_unpickle
+p61
+(S's\xc1h\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">ajax</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">application</td><td style="vertical-align:top;">:</td><td><div>chemwastepro</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cid</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">controller</td><td style="vertical-align:top;">:</td><td><div>default</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_admin</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-5650c1b4-3a42-4c9a-93ad-c0edd70de25d<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_chemwastepro</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-0a62d3f0-5e7a-440e-b244-e9260d4576ff<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_fpdf</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-65cf59fe-0a34-4a7e-a84a-ee5b75444000<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_ohwm</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-a575365a-66fc-4bfb-954e-1f15b3d5372a<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_welcome</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-b66a36f3-3652-45ea-96b6-a8528920a973<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">env</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_ENCODING</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate, sdch</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_ACCEPT_LANGUAGE</td><td style="vertical-align:top;">:</td><td><div>en-US,en;q=0.8,ms;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CACHE_CONTROL</td><td style="vertical-align:top;">:</td><td><div>max-age=0</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_CONNECTION</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_COOKIE</td><td style="vertical-align:top;">:</td><td><div>session_id_fpdf=127.0.0.1-65cf59fe-0a34-4a7e-a84a-ee5b75444000; session_id_ohwm=127.0.0.1-a575365a-66fc-4bfb-954e-1f15b3d5372a; session_id_welcome=127.0.0.1-b66a36f3-3652-45ea-96b6-a8528920a973; session_id_chemwastepro=127.0.0.1-0a62d3f0-5e7a-440e-b244-e9260d4576ff; session_id_admin=127.0.0.1-5650c1b4-3a42-4c9a-93ad-c0edd70de25d</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_HOST</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_UPGRADE_INSECURE_REQUESTS</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">HTTP_USER_AGENT</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">PATH_INFO</td><td style="vertical-align:top;">:</td><td><div>/chemwastepro/default/popchemindex</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">QUERY_STRING</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_ADDR</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REMOTE_PORT</td><td style="vertical-align:top;">:</td><td><div>50298</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">REQUEST_METHOD</td><td style="vertical-align:top;">:</td><td><div>GET</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SCRIPT_NAME</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_NAME</td><td style="vertical-align:top;">:</td><td><div>M1PDG8WL</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PORT</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_PROTOCOL</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">SERVER_SOFTWARE</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/admin/&#x27;, &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/welcome/&#x27;, &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x109c54200: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;M1PDG8WL&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept</td><td style="vertical-align:top;">:</td><td><div>text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_encoding</td><td style="vertical-align:top;">:</td><td><div>gzip, deflate, sdch</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_accept_language</td><td style="vertical-align:top;">:</td><td><div>en-US,en;q=0.8,ms;q=0.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_cache_control</td><td style="vertical-align:top;">:</td><td><div>max-age=0</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_connection</td><td style="vertical-align:top;">:</td><td><div>keep-alive</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_cookie</td><td style="vertical-align:top;">:</td><td><div>session_id_fpdf=127.0.0.1-65cf59fe-0a34-4a7e-a84a-ee5b75444000; session_id_ohwm=127.0.0.1-a575365a-66fc-4bfb-954e-1f15b3d5372a; session_id_welcome=127.0.0.1-b66a36f3-3652-45ea-96b6-a8528920a973; session_id_chemwastepro=127.0.0.1-0a62d3f0-5e7a-440e-b244-e9260d4576ff; session_id_admin=127.0.0.1-5650c1b4-3a42-4c9a-93ad-c0edd70de25d</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_host</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1:8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_upgrade_insecure_requests</td><td style="vertical-align:top;">:</td><td><div>1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">http_user_agent</td><td style="vertical-align:top;">:</td><td><div>Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_3) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/49.0.2623.87 Safari/537.36</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>188.1.168.192.in-addr.arpa</div></td></tr><tr><td><div>M1PDG8WL</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.188</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path_info</td><td style="vertical-align:top;">:</td><td><div>/chemwastepro/default/popchemindex</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">query_string</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_addr</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">remote_port</td><td style="vertical-align:top;">:</td><td><div>50298</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_method</td><td style="vertical-align:top;">:</td><td><div>GET</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">request_uri</td><td style="vertical-align:top;">:</td><td><div>/chemwastepro/default/popchemindex</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">script_name</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_name</td><td style="vertical-align:top;">:</td><td><div>M1PDG8WL</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_port</td><td style="vertical-align:top;">:</td><td><div>8000</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_protocol</td><td style="vertical-align:top;">:</td><td><div>HTTP/1.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">server_software</td><td style="vertical-align:top;">:</td><td><div>Rocket 1.2.6</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_path</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x10005b270&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x109c8f0b8&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x106c4fd50&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi.version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_errors</td><td style="vertical-align:top;">:</td><td><div>&lt;open file &#x27;&lt;stderr&gt;&#x27;, mode &#x27;w&#x27; at 0x10005b270&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_file_wrapper</td><td style="vertical-align:top;">:</td><td><div>&lt;class wsgiref.util.FileWrapper at 0x109c8f0b8&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_input</td><td style="vertical-align:top;">:</td><td><div>&lt;socket._fileobject object at 0x106c4fd50&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multiprocess</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_multithread</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_run_once</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_url_scheme</td><td style="vertical-align:top;">:</td><td><div>http</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi_version</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>1</div></td></tr><tr><td><div>0</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">extension</td><td style="vertical-align:top;">:</td><td><div>html</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">folder</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">function</td><td style="vertical-align:top;">:</td><td><div>popchemindex</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">global_settings</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">app_folders</td><td style="vertical-align:top;">:</td><td><div>set([&#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/admin/&#x27;, &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/welcome/&#x27;, &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/&#x27;])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">applications_parent</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_args</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cmd_options</td><td style="vertical-align:top;">:</td><td><div>&lt;Values at 0x109c54200: {&#x27;verbose&#x27;: False, &#x27;ip&#x27;: &#x27;127.0.0.1&#x27;, &#x27;debuglevel&#x27;: 30, &#x27;with_scheduler&#x27;: False, &#x27;ips&#x27;: [], &#x27;shutdown_timeout&#x27;: 5, &#x27;taskbar&#x27;: False, &#x27;with_coverage&#x27;: False, &#x27;scheduler_groups&#x27;: None, &#x27;port&#x27;: 8000, &#x27;maxthreads&#x27;: None, &#x27;softcron&#x27;: False, &#x27;server_name&#x27;: &#x27;M1PDG8WL&#x27;, &#x27;bpython&#x27;: False, &#x27;nogui&#x27;: False, &#x27;pid_filename&#x27;: &#x27;httpserver.pid&#x27;, &#x27;print_errors&#x27;: False, &#x27;extcron&#x27;: False, &#x27;runcron&#x27;: False, &#x27;run_system_tests&#x27;: False, &#x27;test&#x27;: None, &#x27;folder&#x27;: &#x27;/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources&#x27;, &#x27;config&#x27;: &#x27;&#x27;, &#x27;minthreads&#x27;: None, &#x27;shell&#x27;: None, &#x27;run&#x27;: &#x27;&#x27;, &#x27;log_filename&#x27;: &#x27;httpserver.log&#x27;, &#x27;profiler_dir&#x27;: None, &#x27;args&#x27;: [&#x27;&#x27;], &#x27;socket_timeout&#x27;: 5, &#x27;ssl_ca_certificate&#x27;: None, &#x27;scheduler&#x27;: None, &#x27;interfaces&#x27;: None, &#x27;ssl_private_key&#x27;: &#x27;&#x27;, &#x27;gae&#x27;: None, &#x27;password&#x27;: &#x27;&lt;ask&gt;&#x27;, &#x27;request_queue_size&#x27;: 5, &#x27;ssl_certificate&#x27;: &#x27;&#x27;, &#x27;cronjob&#x27;: False, &#x27;numthreads&#x27;: None, &#x27;quiet&#x27;: False, &#x27;import_models&#x27;: False, &#x27;timeout&#x27;: 10, &#x27;plain&#x27;: False, &#x27;nobanner&#x27;: False}&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">db_sessions</td><td style="vertical-align:top;">:</td><td><div>set([])</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">debugging</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">gluon_parent</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_jython</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_pypy</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_source</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">local_hosts</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>188.1.168.192.in-addr.arpa</div></td></tr><tr><td><div>M1PDG8WL</div></td></tr><tr><td><div>::ffff:127.0.0.1</div></td></tr><tr><td><div>::1</div></td></tr><tr><td><div>192.168.1.188</div></td></tr><tr><td><div>127.0.0.1</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">web2py_version</td><td style="vertical-align:top;">:</td><td><div>2.13.4-stable+timestamp.2015.12.26.04.59.39</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_https</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_local</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_restful</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_scheduler</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">is_shell</td><td style="vertical-align:top;">:</td><td><div>False</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">now</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 3, 22, 21, 15, 57, 672546)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">raw_args</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">raw_extension</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">url</td><td style="vertical-align:top;">:</td><td><div>/chemwastepro/default/popchemindex</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">utcnow</td><td style="vertical-align:top;">:</td><td><div>datetime.datetime(2016, 3, 23, 4, 15, 57, 672554)</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">wsgi</td><td style="vertical-align:top;">:</td><td><div>&lt;gluon.main.LazyWSGI object at 0x10c790a10&gt;</div></td></tr></table></div>'
+tRp62
+sS'frames'
+p63
+(lp64
+(dp65
+S'file'
+p66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/restricted.py'
+p67
+sS'dump'
+p68
+(dp69
+sS'lnum'
+p70
+I227
+sS'lines'
+p71
+(dp72
+I224
+S'            ccode = code'
+p73
+sI225
+S'        else:'
+p74
+sI226
+S'            ccode = compile2(code, layer)'
+p75
+sI227
+S'        exec ccode in environment'
+p76
+sI228
+S'    except HTTP:'
+p77
+sI229
+S'        raise'
+p78
+sI230
+S'    except RestrictedError:'
+p79
+sI231
+S'        # do not encapsulate (obfuscate) the original RestrictedError'
+p80
+sI222
+S'    try:'
+p81
+sI223
+S'        if isinstance(code, types.CodeType):'
+p82
+ssS'call'
+p83
+S"(code='# -*- coding: utf-8 -*-\\n# this file is released ...)\\n\\nresponse._vars=response._caller(popchemindex)\\n', environment={'A': <class 'gluon.html.A'>, 'ANY_OF': <class 'gluon.validators.ANY_OF'>, 'ASSIGNJS': <function ASSIGNJS>, 'AppConfig': <function AppConfig>, 'Auth': <class 'gluon.tools.Auth'>, 'B': <class 'gluon.html.B'>, 'BEAUTIFY': <class 'gluon.html.BEAUTIFY'>, 'BODY': <class 'gluon.html.BODY'>, 'BR': <class 'gluon.html.BR'>, 'BUTTON': <class 'gluon.html.BUTTON'>, ...}, layer='/Users/byoung/Desktop/web2py/web2py.app/Contents.../applications/chemwastepro/controllers/default.py')"
+p84
+sS'func'
+p85
+S'restricted'
+p86
+sa(dp87
+g66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/controllers/default.py'
+p88
+sg68
+(dp89
+sg70
+I177
+sg71
+(dp90
+I166
+S'        rcount += "{\\"id\\":\\""+str(rows[idx].id)+"\\",\\"text\\":\\""+rows[idx].chemname+"\\"},"'
+p91
+sI167
+S'    if rcount.endswith(","):'
+p92
+sI168
+S'        rcount = rcount[:-1] # remove trailing comma'
+p93
+sI169
+S'    return ("["+rcount+"]")'
+p94
+sI170
+S''
+sI171
+S'def popchemindex():'
+p95
+sI172
+S'    rows = db(db.chemindex.id>0).select(db.chemindex.id)'
+p96
+sI173
+S'    for row in rows:'
+p97
+sI174
+S'        db(db.chemindex.id == row.id).update(group="OR",tsdf=3,treatment=3)'
+p98
+sI175
+S'    return ("done")'
+p99
+ssg83
+S'()'
+p100
+sg85
+S'<module>'
+p101
+sa(dp102
+g66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/globals.py'
+p103
+sg68
+(dp104
+sg70
+I412
+sg71
+(dp105
+I416
+S"        self.generic_patterns = ['*']"
+p106
+sI407
+S"        self.flash = ''            # used by the default view layout"
+p107
+sI408
+S'        self.meta = Storage()      # used by web2py_ajax.html'
+p108
+sI409
+S'        self.menu = []             # used by the default view layout'
+p109
+sI410
+S'        self.files = []            # used by web2py_ajax.html'
+p110
+sI411
+S'        self._vars = None'
+p111
+sI412
+S'        self._caller = lambda f: f()'
+p112
+sI413
+S'        self._view_environment = None'
+p113
+sI414
+S'        self._custom_commit = None'
+p114
+sI415
+S'        self._custom_rollback = None'
+p115
+ssg83
+S'(f=<function popchemindex>)'
+p116
+sg85
+S'<lambda>'
+p117
+sa(dp118
+g66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/controllers/default.py'
+p119
+sg68
+(dp120
+sg70
+I174
+sg71
+(dp121
+I166
+S'        rcount += "{\\"id\\":\\""+str(rows[idx].id)+"\\",\\"text\\":\\""+rows[idx].chemname+"\\"},"'
+p122
+sI167
+S'    if rcount.endswith(","):'
+p123
+sI168
+S'        rcount = rcount[:-1] # remove trailing comma'
+p124
+sI169
+S'    return ("["+rcount+"]")'
+p125
+sI170
+S''
+sI171
+S'def popchemindex():'
+p126
+sI172
+S'    rows = db(db.chemindex.id>0).select(db.chemindex.id)'
+p127
+sI173
+S'    for row in rows:'
+p128
+sI174
+S'        db(db.chemindex.id == row.id).update(group="OR",tsdf=3,treatment=3)'
+p129
+sI175
+S'    return ("done")'
+p130
+ssg83
+S'()'
+p131
+sg85
+S'popchemindex'
+p132
+sa(dp133
+g66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/packages/dal/pydal/objects.py'
+p134
+sg68
+(dp135
+sg70
+I2059
+sg71
+(dp136
+I2054
+S'        if any(f(self,update_fields) for f in table._before_update):'
+p137
+sI2055
+S'            return 0'
+p138
+sI2056
+S'        fields = table._listify(update_fields,update=True)'
+p139
+sI2057
+S'        if not fields:'
+p140
+sI2058
+S'            raise SyntaxError("No fields to update")'
+p141
+sI2059
+S'        ret = db._adapter.update("%s" % table._tablename,self.query,fields)'
+p142
+sI2060
+S'        ret and [f(self,update_fields) for f in table._after_update]'
+p143
+sI2061
+S'        return ret'
+p144
+sI2062
+S''
+sI2063
+S'    def update_naive(self, **update_fields):'
+p145
+ssg83
+S"(self=<Set (chemindex.id = 6)>, **update_fields={'group': 'OR', 'treatment': 3, 'tsdf': 3})"
+p146
+sg85
+S'update'
+p147
+sa(dp148
+g66
+S'/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/packages/dal/pydal/adapters/base.py'
+p149
+sg68
+(dp150
+sg70
+I1031
+sg71
+(dp151
+I1026
+S'        except Exception:'
+p152
+sI1027
+S'            e = sys.exc_info()[1]'
+p153
+sI1028
+S'            table = self.db[tablename]'
+p154
+sI1029
+S"            if hasattr(table,'_on_update_error'):"
+p155
+sI1030
+S'                return table._on_update_error(table,query,fields,e)'
+p156
+sI1031
+S'            raise e'
+p157
+sI1032
+S'        try:'
+p158
+sI1033
+S'            return self.cursor.rowcount'
+p159
+sI1034
+S'        except:'
+p160
+sI1035
+S'            return None'
+p161
+ssg83
+S"(self=<pydal.adapters.mysql.MySQLAdapter object>, tablename='chemindex', query=<Query (chemindex.id = 6)>, fields=[(<pydal.objects.Field object>, 3), (<pydal.objects.Field object>, 'OR'), (<pydal.objects.Field object>, 3)])"
+p162
+sg85
+g147
+sasS'pyver'
+p163
+S'Python 2.7.3: /Users/byoung/Desktop/web2py/web2py.app/Contents/MacOS/python (prefix: /Users/byoung/Desktop/web2py/web2py.app/Contents/Resources)'
+p164
+sS'session'
+p165
+g61
+(S's\x1a\x00\x00\x00<div><table></table></div>'
+tRp166
+sS'etype'
+p167
+S"<class 'gluon.contrib.pymysql.err.ProgrammingError'>"
+p168
+sS'date'
+p169
+S'Tue Mar 22 21:15:58 2016'
+p170
+sS'response'
+p171
+g61
+(S's\n!\x00\x00<div><table><tr><td style="font-weight:bold;vertical-align:top;">body</td><td style="vertical-align:top;">:</td><td><div>&lt;cStringIO.StringO object at 0x10d1001f0&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">cookies</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">session_id_chemwastepro</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-69517c13-3795-485d-8342-20b328d40e90<table><tr><td style="font-weight:bold;vertical-align:top;">comment</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">domain</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">expires</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">httponly</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">max-age</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">path</td><td style="vertical-align:top;">:</td><td><div>/</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">secure</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">version</td><td style="vertical-align:top;">:</td><td><div></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">delimiters</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>{{</div></td></tr><tr><td><div>}}</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">files</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">flash</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">form_label_separator</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">formstyle</td><td style="vertical-align:top;">:</td><td><div>bootstrap3_inline</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">generic_patterns</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>*</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">google_analytics_id</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">headers</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">X-Powered-By</td><td style="vertical-align:top;">:</td><td><div>web2py</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">logo</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">menu</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div><table><tr><td><div>Home</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/default/index</div></td></tr><tr><td><div><table></table></div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Inventory</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>#</div></td></tr><tr><td><div><table><tr><td><div><table><tr><td><div>Item</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/inventory/item</div></td></tr></table></div></td></tr><tr><td><div><li class="divider"></li></div></td></tr><tr><td><div><table><tr><td><div>Container</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/inventory/container</div></td></tr></table></div></td></tr><tr><td><div><li class="divider"></li></div></td></tr><tr><td><div><table><tr><td><div>Shipment</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/inventory/shipment</div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Chemical Index</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/inventory/chemindex</div></td></tr></table></div></td></tr></table></div></td></tr></table></div></td></tr><tr><td><div><table><tr><td><div>Reports</div></td></tr><tr><td><div>False</div></td></tr><tr><td><div>/chemwastepro/reports/popchemindex</div></td></tr></table></div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">meta</td><td style="vertical-align:top;">:</td><td><div><table><tr><td style="font-weight:bold;vertical-align:top;">author</td><td style="vertical-align:top;">:</td><td><div>Bruce Young &lt;brucedyoung@gmail.com&gt;</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">description</td><td style="vertical-align:top;">:</td><td><div>Open Hazardous Waste Management</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">generator</td><td style="vertical-align:top;">:</td><td><div>Web2py Web Framework</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">keywords</td><td style="vertical-align:top;">:</td><td><div>web2py, python, framework</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">models_to_run</td><td style="vertical-align:top;">:</td><td><div><table><tr><td><div>^\\w+\\.py$</div></td></tr><tr><td><div>^default/\\w+\\.py$</div></td></tr><tr><td><div>^default/popchemindex/\\w+\\.py$</div></td></tr></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">postprocessing</td><td style="vertical-align:top;">:</td><td><div><table></table></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_client</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_compression_level</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_expires</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_cookie_key</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_data_name</td><td style="vertical-align:top;">:</td><td><div>session_data_chemwastepro</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_file</td><td style="vertical-align:top;">:</td><td><div>None</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_filename</td><td style="vertical-align:top;">:</td><td><div>/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/sessions/127.0.0.1-69517c13-3795-485d-8342-20b328d40e90</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_hash</td><td style="vertical-align:top;">:</td><td><div>c0762cbf4baf7f9af97c051e7fcb8083</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id</td><td style="vertical-align:top;">:</td><td><div>127.0.0.1-69517c13-3795-485d-8342-20b328d40e90</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_id_name</td><td style="vertical-align:top;">:</td><td><div>session_id_chemwastepro</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_masterapp</td><td style="vertical-align:top;">:</td><td><div>chemwastepro</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_new</td><td style="vertical-align:top;">:</td><td><div>True</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">session_storage_type</td><td style="vertical-align:top;">:</td><td><div>file</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">status</td><td style="vertical-align:top;">:</td><td><div>200</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">subtitle</td><td style="vertical-align:top;">:</td><td><div></div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">title</td><td style="vertical-align:top;">:</td><td><div>Chemwastepro</div></td></tr><tr><td style="font-weight:bold;vertical-align:top;">view</td><td style="vertical-align:top;">:</td><td><div>default/popchemindex.html</div></td></tr></table></div>'
+tRp172
+sS'locals'
+p173
+(dp174
+S'e'
+S'ProgrammingError(1064, u"You have an error in yo...treatment=3 WHERE (chemindex.id = 6)\' at line 1")'
+p175
+sS'fields'
+p176
+S"[(<pydal.objects.Field object>, 3), (<pydal.objects.Field object>, 'OR'), (<pydal.objects.Field object>, 3)]"
+p177
+sS'self'
+p178
+S'<pydal.adapters.mysql.MySQLAdapter object>'
+p179
+sS'tablename'
+p180
+S"'chemindex'"
+p181
+sS'sql'
+p182
+S'"UPDATE chemindex SET tsdf=3,group=\'OR\',treatment=3 WHERE (chemindex.id = 6);"'
+p183
+sS'query'
+p184
+S'<Query (chemindex.id = 6)>'
+p185
+sS'table'
+p186
+S'<Table chemindex (id,chemname,prefix,casnum,grou...hazard,fedwastecode,components,comments,unna,pg)>'
+p187
+sssS'traceback'
+p188
+S'Traceback (most recent call last):\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/restricted.py", line 227, in restricted\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/controllers/default.py", line 177, in <module>\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/globals.py", line 412, in <lambda>\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/applications/chemwastepro/controllers/default.py", line 174, in popchemindex\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/packages/dal/pydal/objects.py", line 2059, in update\n  File "/Users/byoung/Desktop/web2py/web2py.app/Contents/Resources/gluon/packages/dal/pydal/adapters/base.py", line 1031, in update\nProgrammingError: (1064, u"You have an error in your SQL syntax; check the manual that corresponds to your MySQL server version for the right syntax to use near \'group=\'OR\',treatment=3 WHERE (chemindex.id = 6)\' at line 1")\n'
+p189
+s.

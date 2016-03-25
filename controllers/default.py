@@ -132,3 +132,59 @@ def month_selector():
                      _onmouseover="this.style.backgroundColor='yellow'",
                      _onmouseout="this.style.backgroundColor='white'"
                      ) for k in selected])
+
+
+#must use this for list fields to show rendered value, instead of record ids
+def render_docs(ids,row):
+      doc=""
+      for id in ids:
+         doc = doc+db.hazard(id).hazardabbrev+" "#db.wbdocuments(id)
+      return doc
+
+
+def updatedisposalcode():
+    
+    recid = request.vars.name
+    record = db.chemindex(recid)# or redirect(URL('error'))
+    if (record):
+        rdisposalcode = record.disposalcode
+    else:
+        rdisposalcode = ""
+    return rdisposalcode
+    #return "jQuery('#target').html(%s);" % repr(request.vars.name)
+
+    
+    #+'-'+','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard']))+'-'+db.tsdf[r['tsdf']].tsdfname[:3].upper()+'-'+db.treatment[r['treatment']].treatnameabbrev.upper()),
+    
+    
+#Format for Select2
+def getchemindex():
+    rcount=""
+    q = request.vars['q']
+    rows = db(db.chemindex.chemname.contains(q, all=True)).select(db.chemindex.id, db.chemindex.chemname, orderby=db.chemindex.chemname)
+    for idx,row in enumerate(rows):
+        rcount += "{\"id\":\""+str(rows[idx].id)+"\",\"text\":\""+rows[idx].chemname+"\"},"
+    if rcount.endswith(","):
+        rcount = rcount[:-1] # remove trailing comma
+    return ("["+rcount+"]")
+
+def popchemindex():
+    rows = db(db.chemindex.id>0).select() 
+    for row in rows:
+        db.chemindex[row.id] = dict(group="OR",tsdf=3,treatment=3)
+        #db(db.chemindex.id == row.id).update(group="OR",tsdf=3,treatment=3)
+    return ("done")
+
+
+from gluon.tools import Service
+service = Service(globals())
+@service.soap('WSAdditem',returns={'result':int}, args={'otp_container_id':int,'otp_person_uid':str,'building':str,'otp_person_first':str,'otp_person_last':str,'otp_department':str,'otp_container_condition_id':int,'otp_phys_state_id':int,'otp_bottle_type':str,'otp_container_size_unit':str,'otp_container_size':float,'otp_accumulation_start_date':str,'otp_pickup_date':str,'otp_primary_component':int,'otp_components':str,'srs_chartstring':str,'srs_project_id':int,'room':str,'HWPComments':str,'HWPepa_hw_no':str})
+def WSAdditem(otp_container_id,otp_person_uid,building,otp_person_first,otp_person_last,otp_department,otp_container_condition_id,otp_phys_state_id,otp_bottle_type,otp_container_size_unit,otp_container_size,otp_accumulation_start_date,otp_pickup_date,otp_primary_component,otp_components,srs_chartstring,srs_project_id,room,HWPComments,HWPepa_hw_no):
+    itemrecord = db(db.item.inputnumber==otp_container_id).select().first()
+    if not (itemrecord): #record does not exist      
+        Transferid=1
+        #db.item.insert(**{inputnumber:otp_container_id,name:otp_primary_component})
+        db.item.insert(inputnumber=otp_container_id,name=otp_primary_component)
+    else:#record already exists
+        Transferid=-1   
+    return (Transferid)

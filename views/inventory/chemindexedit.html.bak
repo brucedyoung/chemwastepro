@@ -13,7 +13,7 @@
                          <div class="box-body no-padding">
               <table class="table">
                 <tr>
-                  <td  style="width: 100px"><label>Prefix</label>{{=form.custom.widget.cprefix}}</td>
+                  <td  style="width: 100px"><label>Prefix</label>{{=form.custom.widget.cprefix}}{{=hprint}}</td>
                     <td><label>Chemical Name</label> {{=form.custom.widget.chemname}}</td>
                     <td  style="width: 200px"><label>CAS</label> {{=form.custom.widget.casnum}}</td>
                 </tr>
@@ -22,7 +22,7 @@
                 <tr>
                     <td><label>Group</label> {{=form.custom.widget.group}}</td>
                     <td><label>State</label> {{=form.custom.widget.state}}</td>
-                    <td><label>DOT PSN</label> <br>{{=form.custom.widget.cDOTPSN}}</td>
+                    <td><label>DOT PSN</label> <br>{{=form.custom.widget.dotpsn}}</td>
                 </tr>
                 <tr>
                     <td>    <div><label>Hazard</label>{{=form.custom.widget.hazard}}</div>  </td>

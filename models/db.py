@@ -317,7 +317,7 @@ db.container.unna.widget = SQLFORM.widgets.options.widget #make drop-down list
 
 
 db.define_table('item',
-                Field('name','reference chemindex'),
+                Field('name','reference chemindex',required=True),
                 Field('disposalcode',compute=lambda r: db.chemindex[r['name']].disposalcode), 
                 #Field('disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
                 Field('condition_','reference condition_'),#,widget=SQLFORM.widgets.options.widget,requires=[IS_IN_DB(db, db.condition_.name)]),
@@ -333,14 +333,14 @@ db.define_table('item',
                 Field('mixture','text'),
                 Field('comments','text'),
                 Field('input_id','string'),#a reference from the feeder system, example "From Dr. Bromer's lab"
-                Field('inputnumber','integer'),#a reference from the feeder system, example "12345"
+                Field('inputnumber','integer'),#a reference from the feeder system, example "12345" OR otp_waste_container_id
                 Field('shelf', 'reference shelf'), #allow container ID to be empty
                 Field('container', 'reference container'),
                 #Field('Icontainer', 'reference container'),
                 format='%(name)s'
                )
 db.item.state.requires=IS_IN_SET(('Solid','Liquid','Gas'))
-db.item.name.requires = IS_IN_DB(db,'chemindex.id','%(chemname)s')
+db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
 #db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
 #db.item.name.widget=SQLFORM.widgets.string.widget
 #db.item.name.widget=SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
