@@ -74017,3 +74017,47 @@ success!
 timestamp: 2016-02-08T16:21:18.369034
 ALTER TABLE chemindex ADD pg VARCHAR(512);
 success!
+timestamp: 2016-04-01T16:24:13.064849
+CREATE TABLE chemindex(
+    id INT AUTO_INCREMENT NOT NULL,
+    chemname VARCHAR(512),
+    casnum VARCHAR(512),
+    group VARCHAR(512),
+    state VARCHAR(512),
+    disposalcode VARCHAR(512),
+    tsdf INT  , INDEX tsdf__idx (tsdf), FOREIGN KEY (tsdf) REFERENCES tsdf (id) ON DELETE CASCADE,
+    packtype VARCHAR(512),
+    treatment INT  , INDEX treatment__idx (treatment), FOREIGN KEY (treatment) REFERENCES treatment (id) ON DELETE CASCADE,
+    hazwastecodes VARCHAR(512),
+    molecularformula VARCHAR(512),
+    dotpsn CHAR(1),
+    hazard LONGTEXT,
+    fedwastecode LONGTEXT,
+    components LONGTEXT,
+    comments LONGTEXT,
+    unna INT  , INDEX unna__idx (unna), FOREIGN KEY (unna) REFERENCES unna (id) ON DELETE CASCADE,
+    pg VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+timestamp: 2016-04-01T16:24:33.710846
+CREATE TABLE chemindex(
+    id INT AUTO_INCREMENT NOT NULL,
+    chemname VARCHAR(512),
+    casnum VARCHAR(512),
+    group VARCHAR(512),
+    state VARCHAR(512),
+    disposalcode VARCHAR(512),
+    tsdf INT  , INDEX tsdf__idx (tsdf), FOREIGN KEY (tsdf) REFERENCES tsdf (id) ON DELETE CASCADE,
+    packtype VARCHAR(512),
+    treatment INT  , INDEX treatment__idx (treatment), FOREIGN KEY (treatment) REFERENCES treatment (id) ON DELETE CASCADE,
+    hazwastecodes VARCHAR(512),
+    molecularformula VARCHAR(512),
+    dotpsn CHAR(1),
+    hazard LONGTEXT,
+    fedwastecode LONGTEXT,
+    components LONGTEXT,
+    comments LONGTEXT,
+    unna INT  , INDEX unna__idx (unna), FOREIGN KEY (unna) REFERENCES unna (id) ON DELETE CASCADE,
+    pg VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;

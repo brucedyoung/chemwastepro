@@ -1,6 +1,35 @@
 {{extend 'layout.html'}}
+<!--Include jquery-ui for draggable hazards and sortable-->
+<script src="{{=URL('static','plugins/jQueryUI/jquery-ui.js')}}"></script>
+ <style>
+     
+     { scroll: true, scrollSensitivity: 100, scrollSpeed: 100 }
+  #sortable1 { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 200px; height: 200px;overflow:hidden; overflow-y:scroll;}
+  #sortable2 { list-style-type: none; margin: 0; float: left; margin-right: 10px; background: #eee; padding: 5px; width: 300px;background-color: #5bc0de;}
+  #sortable1 li { margin: 1px; padding: 1px; font-size: 0.8em; width: 143px; height: 18px;}
+  #sortable2 li { margin: 5px; padding: 5px; font-size: 1.2em; width: 300px; }
+
+</style>
+<script>
+    
+  $(function() {
+    $( "ul.droptrue" ).sortable({
+       
+      connectWith: "ul",
+      scroll: true, scrollSensitivity: 100, scrollSpeed: 100,
+      update: function(event, ui) {
+                var order = $("#sortable2").sortable("toArray");
+                $('#chem_haz').val(order.join("|"));
+                //alert($('#chem_haz').val());
+            }
+    });
+  });
+  </script>
+
 
  {{=form.custom.begin}}
+
+
             <!--<form role="form">-->
               <div class="box-body">
                 <div class="form-group">
@@ -13,27 +42,42 @@
                          <div class="box-body no-padding">
               <table class="table">
                 <tr>
-                  <td  style="width: 100px"><label>Prefix</label>{{=form.custom.widget.cprefix}}</td>
-                    <td><label>Chemical Name</label> {{=form.custom.widget.chemname}}</td>
+                 <td  style="width: 100px"><label>Prefix</label></td>
+                    <td><label>Chemical Name</label> {{=form.custom.widget.chemname}}<div id="target"></div></td>
+                    
                     <td  style="width: 200px"><label>CAS</label> {{=form.custom.widget.casnum}}</td>
-                </tr>
+ 
+               </tr>
               </table>
               <table class="table">
                 <tr>
-                    <td><label>Group</label> {{=form.custom.widget.group}}</td>
+
+                    <td><label>Group</label> {{=form.custom.widget.group_}}</td>
                     <td><label>State</label> {{=form.custom.widget.state}}</td>
                     <td><label>DOT PSN</label> <br>{{=form.custom.widget.dotpsn}}</td>
                 </tr>
                 <tr>
-                    <td>    <div><label>Hazard</label>{{=form.custom.widget.hazard}}</div>  </td>
-                    <td><label>Reorder</label>
+                    {{=form.custom.widget.hazard}}
+                    <td><label>Hazards</label>
+                        <p><div id="inner">
+                            <ul id="sortable1" class="droptrue">
+                              {{=hazardlist}}
+                            </ul>
+                        </div>
+                        </p>
+                          </td>
+                    <td><div><label>Chemical Hazard</label></div>
+                        <p>         
+                            <input type="hidden" id="chem_haz" name="chem_haz" value="" />
+                            <ul id="sortable2" class="droptrue"></ul>
+                        </p>
                      </td>
                   <td>
                       <label>Pack Type</label>{{=form.custom.widget.packtype}}
                   </td>
- <td>
-     <label> Treatment</label>{{=form.custom.widget.treatment}}
-                  </td>
+                 <td>
+                     <label> Treatment</label>{{=form.custom.widget.treatment}}
+                 </td>
                 </tr>
                 <tr>
                   <td><label>Components</label>
@@ -58,7 +102,8 @@
                         
                         
                  
-                  </div><!-- /.box-body -->
+                  </div><!-- /.box-body -->                    
+                    
                 
                   <div class="box-footer">
                     <button type="submit" class="btn btn-default">Cancel</button>

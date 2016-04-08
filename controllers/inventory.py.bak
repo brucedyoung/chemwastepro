@@ -18,13 +18,8 @@ def index():
 import json
 def item():
     PageHeader = "Item"
-    #enterbutton = """<button onclick="document.location=\""""+URL("admin","default","design", args=request.application)+""">admin</button>"""
     addbutton = """<a href ="""+URL("inventory","itemedit")+""" class="btn btn-block btn-success">Add </a>"""
-
-    #icon="""<div class="col-md-3 col-sm-4">"""+"""<a href="""+URL('inventory','itemedit')+"""/%s><i class="fa fa-fw fa-edit"></i></div></a>"""
-    #editlink=""" <a href="""+URL('inventory','containeredit')+""""class=\"fa fa-fw fa-edit\">Edit</%s>"""
     editlink = """<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
-    #editlink="""<a href="""+URL('inventory','containeredit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     #datatables
     #http://www.pyguy.com/web2py/web2py-tutorial-using-the-datatable-jquery-grid-plugin-with-web2py/
     #Cannot use this:
@@ -152,24 +147,33 @@ def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
-    db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
+    #db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
     rows = db(db.chemindex.id>0).select()
-    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.hazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
+    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.hazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
 
 
 def chemindexedit():
-
+    hprint=''
     PageHeader = "Chemical Index"
-    fields=['chemname', 'prefix', 'casnum', 'group', 'state', 'disposalcode', 'packtype', 'treatment', 'hazwastecodes', 'hazard', 'components','comments']
+    hazardlist =''
+    hazardrows = db(db.hazard.id>0).select()
+    for r in hazardrows.render():
+        
+        hazardlist += str(LI(r.hazardname, _class='ui-state-default ui-sortable-handle', _id=r.id))
+
+    
+    
+    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype', 'treatment','components','hazard', 'hazwastecodes', 'comments']#
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
         #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
+        
         form = SQLFORM(db.chemindex, record,fields=fields)
 
-        hprint=''
+        
         #hlist=str(record.hazard)
-        for number in record.hazard:
+        for number in record.hazard: #build hazard list for disposal code
             #row = db(db.chemindex.id == int(request.vars.name)).select().first()
             row = db(db.hazard.id == int(number)).select().first()
             hprint=hprint+row.hazardabbrev
@@ -191,11 +195,18 @@ def chemindexedit():
        response.flash = 'form accepted'
        try:
             record.update_record(**dict(form.vars))#record is updated
-            redirect(URL('chemindex'))
+            redirect(URL('chemindex'+str(form.vars)))
+            #redirect(URL('chemindex'))
        except NameError:
             response.flash = 'record added'
             redirect(URL('chemindex'))
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint)
+
+
+    
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint,hazardlist=XML(hazardlist))
+
+def itemedittest():
+    return dict()

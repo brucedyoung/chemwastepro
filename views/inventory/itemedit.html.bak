@@ -2,7 +2,8 @@
 <!--Include DYMO.Label.Framework.js for label printing-->
 <script src="{{=URL('static','js/DYMO.Label.Framework.js')}}" type="text/javascript" charset="UTF-8"></script>
 <script src="{{=URL('static','js/PrintLabel.js')}}" type="text/javascript" charset="UTF-8"></script>
-
+<!--Include jquery-ui for draggable hazards and sortable-->
+<script src="{{=URL('static','plugins/jQueryUI/jquery-ui.js')}}"></script>
 
 <!--Include Select2 autocomplete-->
 <link rel="stylesheet" href="{{=URL('static','css/select2.min.css')}}"/>
@@ -19,7 +20,6 @@ function () {
         ajax: {
             url: '{{=URL('default','getchemindex',scheme=True)}}',//scheme=True lists full URL, including hostname
             dataType: 'json',
-            delay: 250,
             data: function (params) {
                 return {
                 q: params.term // search term

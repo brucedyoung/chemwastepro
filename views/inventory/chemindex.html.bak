@@ -30,7 +30,7 @@
      </table>
 
 
-
+{{=BEAUTIFY(response._vars)}}
 
 
 <script type="text/javascript">
@@ -46,7 +46,7 @@ $(document).ready(function(){
             { data: 'tsdf' },
             { data: 'treatment' },
             { data: 'hazard' },
-            { data: 'chazwastecodes' },
+            { data: 'hazwastecodes' },
             { data: 'editlink' },
         ]
     })
