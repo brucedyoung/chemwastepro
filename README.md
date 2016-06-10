@@ -5,7 +5,8 @@ Chemical Waste Management Program
   
  A preview of the functionality: https://brucedyoung.pythonanywhere.com/chemwastepro
   
- Sample Manifest Printing: https://brucedyoung.pythonanywhere.com/chemwastepro/default/generate
+ Sample Manifest Printing: https://brucedyoung.pythonanywhere.com/chemwastepro/manifest/generate
+ Includes dynamic placement of elements
  
  Database Entity Diagram: https://brucedyoung.pythonanywhere.com/chemwastepro/static/dbgraph.pdf
  
@@ -20,4 +21,16 @@ Chemical Waste Management Program
  http://developers.dymo.com/2010/06/17/dymo-label-framework-javascript-library-print-multiple-labels/
  
  
+BROWSER SECURITY
  
+Content Security Policy is ON. 
+See /chemwastepro/models/db.py
+Content-Security-Policy:frame-ancestors 'self'
+
+The X-Frame-Options response header is set to SAMEORIGIN
+See /chemwastepro/models/db.py
+X-Frame-Options:SAMEORIGIN
+
+Secure and HTTPS only cookies are enabled under HTTPS
+See /chemwastepro/models/db.py
+session._secure=True

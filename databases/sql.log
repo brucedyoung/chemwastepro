@@ -74061,3 +74061,45 @@ CREATE TABLE chemindex(
     pg VARCHAR(512),
     PRIMARY KEY (id)
 ) ENGINE=InnoDB CHARACTER SET utf8;
+timestamp: 2016-04-08T11:06:14.363746
+CREATE TABLE chemindex_hazard_association(
+    id INT AUTO_INCREMENT NOT NULL,
+    chemindex_id INT  , INDEX chemindex_id__idx (chemindex_id), FOREIGN KEY (chemindex_id) REFERENCES chemindex (id) ON DELETE CASCADE,
+    hazard INT  , INDEX hazard__idx (hazard), FOREIGN KEY (hazard) REFERENCES hazard (id) ON DELETE CASCADE,
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2016-04-08T12:17:37.036275
+ALTER TABLE chemindex_hazard_association ADD hazard_id INT  , ADD INDEX hazard_id__idx (hazard_id), ADD FOREIGN KEY (hazard_id) REFERENCES hazard (id) ON DELETE CASCADE;
+success!
+timestamp: 2016-04-08T12:17:37.073762
+ALTER TABLE chemindex_hazard_association DROP COLUMN hazard;
+timestamp: 2016-04-08T12:17:54.690934
+ALTER TABLE chemindex_hazard_association DROP COLUMN hazard;
+timestamp: 2016-04-08T12:18:38.960008
+ALTER TABLE chemindex_hazard_association DROP COLUMN hazard;
+timestamp: 2016-04-08T12:19:03.018248
+ALTER TABLE chemindex_hazard_association DROP COLUMN hazard;
+timestamp: 2016-05-17T16:25:05.866438
+CREATE TABLE manifest_layout(
+    id INT AUTO_INCREMENT NOT NULL,
+    shipment INT  , INDEX shipment__idx (shipment), FOREIGN KEY (shipment) REFERENCES shipment (id) ON DELETE CASCADE,
+    type VARCHAR(512),
+    element VARCHAR(512),
+    x1 VARCHAR(512),
+    y1 VARCHAR(512),
+    w1 VARCHAR(512),
+    h1 VARCHAR(512),
+    PRIMARY KEY (id)
+) ENGINE=InnoDB CHARACTER SET utf8;
+success!
+timestamp: 2016-05-17T16:26:06.965518
+ALTER TABLE manifest_layout DROP COLUMN shipment;
+timestamp: 2016-05-17T16:26:57.237359
+ALTER TABLE manifest_layout DROP COLUMN shipment;
+timestamp: 2016-05-17T16:27:06.930784
+ALTER TABLE manifest_layout DROP COLUMN shipment;
+timestamp: 2016-05-17T16:27:55.412763
+ALTER TABLE manifest_layout DROP COLUMN shipment;
+timestamp: 2016-05-17T16:28:06.926940
+ALTER TABLE manifest_layout DROP COLUMN shipment;

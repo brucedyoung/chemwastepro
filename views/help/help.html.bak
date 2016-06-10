@@ -15,7 +15,7 @@
     
 </p>
 <p>
-    Manifest and Hazardous Waste Label Printing<br>
+    Hazardous Waste Label Printing<br>
 
 </p>
 <p>
@@ -25,4 +25,14 @@
     See: http://developers.dymo.com/category/sdk-samples/<br>
     It is formatted for: Address label 5 lines<br>
     Includes header, item number, shelf number, chemical name, disposal code, hazards, accumulation date, and item number barcode 
+</p>
+<p>
+    Manifest<br>
+
+</p>
+<p>
+    The manifest printing is output to a PDF form. It uses the pyfpdf library include in web2py.<br>
+    The PDF from is built up by elements that are positioned by values in the database. The application administrator can adjust the postitioning of the elements without modifying code. By using a PDF, the form can be customized to any printer.<br>
+    Manifests can be previewed on top of a sample manifest background. The PDF provided by the EPA is converted to a PNG image offline. If a print preview is requested, the PNG image is added as a watermark to the output.<br>
+
 </p>

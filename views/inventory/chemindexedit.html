@@ -19,8 +19,8 @@
       scroll: true, scrollSensitivity: 100, scrollSpeed: 100,
       update: function(event, ui) {
                 var order = $("#sortable2").sortable("toArray");
-                $('#chem_haz').val(order.join("|"));
-                //alert($('#chem_haz').val());
+                $("[name='hazard_list']").val(order.join(","));
+                //alert($("[name='hazard_list']").val());
             }
     });
   });
@@ -57,7 +57,8 @@
                     <td><label>DOT PSN</label> <br>{{=form.custom.widget.dotpsn}}</td>
                 </tr>
                 <tr>
-                    {{=form.custom.widget.hazard}}
+                   <!-- <input type="hidden" id="hazard_list" name="hazard_list" value="10,11" />-->
+                   
                     <td><label>Hazards</label>
                         <p><div id="inner">
                             <ul id="sortable1" class="droptrue">
@@ -67,9 +68,10 @@
                         </p>
                           </td>
                     <td><div><label>Chemical Hazard</label></div>
-                        <p>         
-                            <input type="hidden" id="chem_haz" name="chem_haz" value="" />
-                            <ul id="sortable2" class="droptrue"></ul>
+                        <p>       
+                            <!--This hidden field receives the values of the chem_haz -->
+                            <!--<input type="hidden" id="chem_haz" name="chem_haz" value="" />-->
+                            <ul id="sortable2" class="droptrue">{{=chemhazardlist}}</ul>
                         </p>
                      </td>
                   <td>
@@ -84,12 +86,8 @@
                   {{=form.custom.widget.components}}</td></td>
                   <td> <label>Comments</label>
                   {{=form.custom.widget.comments}}</td>
-                  <td>
-                    <div class="progress progress-xs progress-striped active">
-                      <div class="progress-bar progress-bar-success" style="width: 90%"></div>
-                    </div>
-                  </td>
-                  <td><span class="badge bg-green">90%</span></td>
+                  <td></td>
+                  <td></td>
                 </tr>
               </table>                       
             </div> 

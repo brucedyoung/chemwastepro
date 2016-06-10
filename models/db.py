@@ -40,6 +40,13 @@ response.formstyle = myconf.take('forms.formstyle')  # or 'bootstrap3_stacked' o
 response.form_label_separator = myconf.take('forms.separator')
 
 
+#Security stuff. Make sure your web server is set to HTTPS only.
+response.headers['X-Frame-Options'] = "SAMEORIGIN"
+response.headers['Content-Security-Policy'] = "frame-ancestors 'self'"
+#session._secure=True # Sets cookies to "HTTPOnly; Secure" # this only works if the site is HTTPS
+#response.headers['Strict-Transport-Security'] = "max-age=31536000" # this only works if the site is HTTPS
+
+
 ## (optional) optimize handling of static files
 # response.optimize_css = 'concat,minify,inline'
 # response.optimize_js = 'concat,minify,inline'
@@ -158,7 +165,7 @@ db.define_table('treatment',
                 )
 db.define_table('hazard',
                 Field('hazardname','string'),
-                Field('hazardorder','integer'),
+                Field('hazard_order','integer'),
                 Field('hazardabbrev','string'),
                 format='%(hazardname)s'
                 )
@@ -223,6 +230,14 @@ db.chemindex.group_.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic'))) # I
 db.chemindex.state.requires=IS_EMPTY_OR(IS_IN_SET(('Solid','Liquid','Gas')))
 db.chemindex.unna.requires = IS_EMPTY_OR(IS_IN_DB(db,'unna.id','%(unna)s'))
 
+
+#Reference http://blog.jotbe-fx.de/articles/2522/web2py-Normalized-many-to-many-model-with-multiselect-drop-down
+db.define_table('chemindex_hazard_association',
+                Field('chemindex_id', 'reference chemindex'),
+                Field('hazard_id', 'reference hazard'),
+                Field('hazard_order', 'integer'),
+                
+               )
 
 db.define_table('psn', # Proper Shipping Name
                 Field('propershippingname',type='string',
@@ -369,17 +384,29 @@ db.item.shelf.widget = SQLFORM.widgets.options.widget #make drop-down list
 #b.define_table('soso', Field('lolo'), Field('moon', widget=SQLFORM.widgets.options.widget, requires=[IS_IN_DB(db, db.country.name), IS_UPPER()]))
 
 #for printing manifest to PDF 
-db.define_table('manifest',
+db.define_table('manifest_layout',
+                #Number elements rom 1000 to make room from change.
+                # Elements on first page start with 1000 + box number. Example: #1 Generator number = element 1001
+                #Elements on page 2 start with 2000
                 Field('type','string'),
-                Field('element','string'),
-                Field('x1','string'), # x and y are botton left corner
-                Field('y1','string'),
-                Field('w1','string'), # width of box
-                Field('h1','string'), # height of box
+                Field('name','string'),
+                Field('element','integer'),
+                Field('x1','double'), # x and y are botton left corner
+                Field('y1','double'),
+                Field('x2','double'), # x and y are botton left corner
+                Field('y2','double'),
+                Field('font','string'),
+                Field('size','double'),
+                Field('bold','integer'),
+                Field('italic','integer'),
+                Field('underline','integer'),
+                Field('foreground','integer'),
+                Field('background','integer'),
+                Field('align','string'),
+                Field('priority','integer'),
+                Field('multiline','integer'),
+                
                 )
-
-
-
 
 #FLAMMABLE LIQUIDS, N.O.S.
 db.define_table('site',
