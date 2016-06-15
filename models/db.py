@@ -84,8 +84,10 @@ auth.settings.reset_password_requires_verification = True
 
 ##Define some globals
 PageHeader = ""
-
-
+topactionbutton1 = ""
+topactionbutton2 = ""
+topactionbutton3 = ""
+topactionbutton4 = ""
 
 
 #########################################################################
@@ -183,6 +185,7 @@ db.define_table('unna',
 db.define_table('chemindex',
                 Field('id','id'),
                 Field('chemname','string'),
+                #Field('chemname','string', requires=IS_NOT_EMPTY())
                 #Field('prefix','string'),
                 #Field('cmidfix','string'),
                 #Field('csuffix','string'),
@@ -315,7 +318,6 @@ db.define_table('container',
                 Field('psndescriptor','string'),
                 Field('hazardousproperties','list:string', requires = IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True)),
                
-                
                 format='%(contnum)s'
                )
 #db.container.cstatefedwastecode.widget = multiselect_widget
@@ -366,7 +368,10 @@ db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
 
 #db.item.disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
 #db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
-db.item.container.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(contnum)s')), #allow container ID to be empty 
+
+
+
+db.item.container.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(id)s %(contnum)s')), #allow container ID to be empty - Put ID and container key, in case container key is blank
 db.item.container.widget = SQLFORM.widgets.options.widget #make drop-down list    
 db.item.units.requires = IS_EMPTY_OR(IS_IN_DB(db,'units.id','%(name)s')), #allow units to be empty
 db.item.units.widget = SQLFORM.widgets.options.widget #make drop-down list

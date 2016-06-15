@@ -37,12 +37,14 @@ def itemedit():
     chemname=""
     chemid = 0
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
+    db.item.container.represent = lambda container, row: container+"hey"
     fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'container', 'shelf']
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.disposalcode #<<<<TODO Add onchange event
         chemname = record.name.chemname
         chemid = record.name
+        item_id = record.id
         form = SQLFORM(db.item, record,fields=fields)
 
     #FIX if there is no shelf
@@ -68,7 +70,12 @@ def itemedit():
             redirect(URL('item'))
     elif form.errors: #name is None
        redirect(URL('item'))
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid)
+    
+
+    topactionbutton1 = A(DIV(' Print Label', _class='fa fa-print'), _class='btn btn-block btn-default btn-xs', _id="printButton", target='target1')
+    #ID,Chemname,DisposalCode,AccumulationStartDate,Shelf,PrimaryHazard
+    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemname='+chemname), target='target1')
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid,item_id=item_id,topactionbutton1=topactionbutton1,topactionbutton2=topactionbutton2)
 
 def container():
     PageHeader = "Container"
@@ -79,6 +86,8 @@ def container():
     container = json.dumps([dict(id=r.id,contnum=r.contnum,psn=r.psn,opendate=str(r.opendate),closedate=str(r.closedate),disposalcode=r.disposalcode,shipment=r.shipment,editlink=editlink  % r.id) for r in rows.render()])#adding render to use represented view of fields
     #form = SQLFORM(db.shipment,editable=True,)
 
+                 
+          
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(container))
 
 def containeredit():
@@ -145,7 +154,7 @@ def chemindex():
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
     db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
     #Get chemical hazard list from intermediate table
-    chemassoc_rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
+    #chemassoc_rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
     
     rows = db(db.chemindex.id>0).select()
     chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.hazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
@@ -221,10 +230,14 @@ def chemindexedit():
                     db.chemindex_hazard_association.insert(chemindex_id=form.vars.id,hazard_id=hazardid,hazard_order=index)    
             record.update_record(**dict(form.vars))#record is updated
             redirect(URL('chemindex')+str(ohazard_list))
+            
+         
        except NameError:
+         
+        
             response.flash = 'record added'
             redirect(URL('chemindex'))
-    elif form.errors:
+    elif form.errors: #problems with required fields
        redirect(URL(form.errors))
        response.flash = 'form has errors'
 
@@ -232,5 +245,7 @@ def chemindexedit():
     
     return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint,chemhazardlist=XML(chemhazardlist),hazardlist=XML(hazardlist))
 
-def itemedittest():
-    return dict()
+
+def shelve():
+
+    return (request.vars.item_id)

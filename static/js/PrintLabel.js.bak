@@ -23,7 +23,7 @@
     function onload()
     {
 
-
+        
         var textTextArea = document.getElementById('item_id');
         var printButton = document.getElementById('printButton');
 

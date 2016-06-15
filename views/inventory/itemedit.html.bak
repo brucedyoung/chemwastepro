@@ -5,7 +5,7 @@
 <!--Include jquery-ui for draggable hazards and sortable-->
 <script src="{{=URL('static','plugins/jQueryUI/jquery-ui.js')}}"></script>
 
-<!--Include Select2 autocomplete-->
+<!--Include Select2 autocomplete for chmical name-->
 <link rel="stylesheet" href="{{=URL('static','css/select2.min.css')}}"/>
 <script src="{{=URL('static','js/select2.min.js')}}" type="text/javascript" charset="UTF-8"></script>
 
@@ -60,6 +60,10 @@ function () {
 
 <!-- Main content -->
 {{=form.custom.begin}}
+<!-- For Printing Labels -->
+<input type="hidden" name="item_id" id="item_id" value="{{=item_id}}">
+
+
     <section class="content">
         <div class="row">
         <!-- general form elements -->
@@ -190,9 +194,8 @@ function () {
 
             
 
-            
-      <a id="printButton"  class="btn btn-default"><i class="fa fa-print"></i> Print Label</a>
-            
+                  
+     
             
 <div class=" pull-right"> {{=form.custom.submit}}</div>
         </div>
@@ -202,7 +205,7 @@ function () {
        
 {{=form.custom.end}}<!-- /.form -->    
 
-        <label for="textTextArea">Label text:</label><br/>
-        <textarea name="textTextArea" id="textTextArea"  rows='5' cols='40'>{{=labeltext}}</textarea>
+       
     </div>
             <!-- </form>-->
+<textarea name="textTextArea" id="textTextArea"  rows='5' cols='40'>{{=labeltext}}</textarea>

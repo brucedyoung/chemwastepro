@@ -152,16 +152,16 @@
             <li><a href={{=URL('inventory','shipment')}}><i class="fa fa-link"></i> <span>Shipment</span></a></li>
             <li><a href={{=URL('inventory','chemindex')}}><i class="fa fa-link"></i> <span>Chemical Index</span></a></li>
             <li><a href={{=URL('reports','index')}}><i class="fa fa-link"></i> <span>Reports</span></a></li>
-            <li class="treeview">
+            <!---<li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>
               <ul class="treeview-menu">
                 <li><a href="#">Link in level 2</a></li>
                 <li><a href="#">Link in level 2</a></li>
               </ul>
-            </li>
+            </li>-->
             <li class="header">Support Tables</li>
-            <li><a href={{=URL('inventory','shelf')}}><i class="fa fa-link"></i> <span>Shelf</span></a></li>
-            <li><a href={{=URL('inventory','cabinet')}}><i class="fa fa-link"></i> <span>Cabinet</span></a></li>
+            <li><a href={{=URL('metadata','shelf')}}><i class="fa fa-link"></i> <span>Shelf</span></a></li>
+            <li><a href={{=URL('metadata','cabinet')}}><i class="fa fa-link"></i> <span>Cabinet</span></a></li>
             </li>
           </ul><!-- /.sidebar-menu -->
         </section>
@@ -172,10 +172,18 @@
       <div class="content-wrapper">
         <!-- Content Header (Page header) -->
         <section class="content-header">
-          <h1>
-            {{=PageHeader}}
-            
-          </h1>
+                    <div class="col-xs-4 text-left">
+                        <h3>{{=PageHeader}}</h3>
+                    </div>
+                    <div class="col-xs-2 text-left">
+                        {{=topactionbutton1}}
+                    </div>
+                    <div class="col-xs-2 text-left">
+                        {{=topactionbutton2}}
+                    </div>
+                    <div class="col-xs-2 text-left">
+                        <div id="target1"></div>
+                  </div>
           <ol class="breadcrumb">
             <li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
             <li class="active">Here</li>
