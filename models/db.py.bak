@@ -31,7 +31,10 @@ else:
     ## from gluon.contrib.memdb import MEMDB
     ## from google.appengine.api.memcache import Client
     ## session.connect(request, response, db = MEMDB(Client()))
-
+    
+#add the db object to the current thread local object, which can then be imported and accessed within the modules
+from gluon import current
+current.db = db
 ## by default give a view/generic.extension to all actions from localhost
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
@@ -84,8 +87,10 @@ auth.settings.reset_password_requires_verification = True
 
 ##Define some globals
 PageHeader = ""
-
-
+topactionbutton1 = ""
+topactionbutton2 = ""
+topactionbutton3 = ""
+topactionbutton4 = ""
 
 
 #########################################################################
@@ -213,7 +218,7 @@ db.define_table('chemindex',
                 #list can be reordered. For example, 1=Flammable, 2 = Corrosive
                 #list is ordered on creation
                 #['1','2'] list can be reordered to reflect Corrosive,Flammable = ['2','1']
-                Field('hazard','list:string', requires = IS_EMPTY_OR(IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True))),
+                #Field('hazard','list:string', requires = IS_EMPTY_OR(IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True))),
                 #State Hazardous Waste Codes - http://www3.epa.gov/epawaste/inforesources/data/br13/br13-spec ification.pdf
                 Field('fedwastecode','list:string', requires = IS_EMPTY_OR(IS_IN_DB(db,'fedwastecode.id', db.fedwastecode._format,multiple=True))), #like D001, D002
                 Field('dotpsn','boolean'), #Department of Transportation Proper Shipping Name - if checked, do not edit name
@@ -231,6 +236,11 @@ db.chemindex.group_.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic'))) # I
 db.chemindex.state.requires=IS_EMPTY_OR(IS_IN_SET(('Solid','Liquid','Gas')))
 db.chemindex.unna.requires = IS_EMPTY_OR(IS_IN_DB(db,'unna.id','%(unna)s'))
 
+#rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
+#        for row in rows:
+#            chemhazardlist += str(LI(row.hazard_id.hazardname, _class='ui-state-default ui-sortable-handle', _id=row.hazard_id))
+
+
 
 #Reference http://blog.jotbe-fx.de/articles/2522/web2py-Normalized-many-to-many-model-with-multiselect-drop-down
 db.define_table('chemindex_hazard_association',
@@ -239,6 +249,8 @@ db.define_table('chemindex_hazard_association',
                 Field('hazard_order', 'integer'),
                 
                )
+
+db.chemindex.hazards_st = Field.Method(lambda id,row:db(db.chemindex_hazard_association.chemindex_id == row.id).select().first().hazard_id)
 
 db.define_table('psn', # Proper Shipping Name
                 Field('propershippingname',type='string',
@@ -422,3 +434,9 @@ db.define_table('site',
 #if db(db.person).isempty():
     #db.chemindex.cname="Acetone"
 enterbutton = cancelbutton = ''
+
+#for row in db(db.chemindex.id > 0).select():
+#    if (row.id % 2 == 0):
+#        row.update_record(treatment=1)
+#    else:
+#        row.update_record(treatment=2)

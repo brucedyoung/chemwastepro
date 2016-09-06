@@ -62,7 +62,7 @@ function () {
 {{=form.custom.begin}}
 <!-- For Printing Labels -->
 <input type="hidden" name="item_id" id="item_id" value="{{=item_id}}">
-
+<input type="hidden" name="chemname" id="chemname" value="{{=chemname}}">
 
     <section class="content">
         <div class="row">
@@ -112,7 +112,7 @@ function () {
 
                         <div class="col-xs-6"><!-- two column --> 
                             <label>Shelf</label>
-                            <div>{{=form.custom.widget.Ishelf}}</div>
+                            <div>{{=form.custom.widget.shelf}}</div>
                         </div>
                         <div class="col-xs-6">
                             <label>Container</label>
@@ -208,4 +208,3 @@ function () {
        
     </div>
             <!-- </form>-->
-<textarea name="textTextArea" id="textTextArea"  rows='5' cols='40'>{{=labeltext}}</textarea>

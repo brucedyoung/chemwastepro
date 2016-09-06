@@ -2,6 +2,8 @@
 # try something like
 from gluon.custom_import import track_changes; track_changes(True)
 from cwp_htmlhelpers import cwpeditlink
+import cwp_functions
+
 
 #must use this for list fields to show rendered value, instead of record ids
 def render_docs(ids,row):
@@ -54,6 +56,7 @@ def itemedit():
         form = SQLFORM(db.item,fields=fields)
         disposalcode  = ''
         labeltext = ''
+        item_id = 0
     form.add_button('Back', URL('other_page'))
     #disposalcode = record.disposalcode #<<<<TODO Add onchange event
     #Eplicitly list fields. When using {{=form.custom.widget.Ireceptacle}}, it will only show and edit listed fields
@@ -71,10 +74,11 @@ def itemedit():
     elif form.errors: #name is None
        redirect(URL('item'))
     
-
+    #using web2py built-in helper "A" 
     topactionbutton1 = A(DIV(' Print Label', _class='fa fa-print'), _class='btn btn-block btn-default btn-xs', _id="printButton", target='target1')
     #ID,Chemname,DisposalCode,AccumulationStartDate,Shelf,PrimaryHazard
-    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemname='+chemname), target='target1')
+    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemid='+str(chemid)), target='target1')
+    
     return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid,item_id=item_id,topactionbutton1=topactionbutton1,topactionbutton2=topactionbutton2)
 
 def container():
@@ -152,12 +156,12 @@ def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
-    db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
+    #db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
     #Get chemical hazard list from intermediate table
     #chemassoc_rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
     
     rows = db(db.chemindex.id>0).select()
-    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.hazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
+    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
 
 
@@ -184,7 +188,7 @@ def chemindexedit():
     
 
     
-    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype', 'treatment','components','hazard', 'hazwastecodes', 'comments']#
+    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype',  'hazard', 'treatment','components', 'hazwastecodes', 'comments']#
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
         #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
@@ -247,5 +251,26 @@ def chemindexedit():
 
 
 def shelve():
-
-    return (request.vars.item_id)
+    #use this to control the dropdown on the item edit page.
+    #That way, the user has to save the record for changes to take place.
+    #otherwise, cancels
+    responsestr = "no"
+    chemhazardlistc=""
+    item_id=request.vars.item_id
+    item_chemid=request.vars.item_chemid
+    if ((item_id > "") & (item_chemid > "")):
+        chemindex_row = db(db.chemindex.id == int(item_chemid)).select().first() #should be only one
+        disposalcode=cwp_functions.returndisposalcode(chemindex_row.id) #get disposalcode string
+        row = db(db.shelf.disposalcode == disposalcode).select().first()#get the first one. Could reduce by creation date or shelf number
+    if row is None:
+        #user alert of change
+        responsestr = "No shelf found"
+        #javascript making change
+        response.js = "var element = document.getElementById('item_shelf');element.value = 0;"
+    else:
+        #user alert of change
+        responsestr = "Item shelved"
+        #javascript making change
+        response.js =  ("var element = document.getElementById('item_shelf');element.value = %s;" % row.id)
+        responsestr = row.shelfcode#disposalcode
+    return (responsestr)
