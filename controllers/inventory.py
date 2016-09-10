@@ -29,21 +29,23 @@ def item():
     #Because we need the represented value, like "chemical Name"
     #So we do this:
     rows = db(db.item.id>0).select()
-    item = json.dumps([dict(id=r.id,name=r.name,disposalcode=r.disposalcode,pounds=r.pounds,container=r.container,shelf=r.shelf,editlink=editlink  % r.id) for r in rows.render()])#adding render to use represented view of fields
-
+    #cannot use render, because need r.name as number to calculate disposal code by function, so use direct references for remainder of fields that need represent
+    item = json.dumps([dict(id=r.id,name=r.name.chemname,disposalcode=cwp_functions.returndisposalcode(r.name),pounds=r.pounds,container=r.container.contnum,shelf=r.shelf.shelfcode,editlink=editlink  % r.id) for r in rows])# do not rows.render()
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(item))
 
 
 def itemedit():
     PageHeader = "Item"
-    chemname=""
+    chemname=disposalcode=""
     chemid = 0
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
     db.item.container.represent = lambda container, row: container+"hey"
     fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'container', 'shelf']
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
-        disposalcode = record.disposalcode #<<<<TODO Add onchange event
+        
+        disposalcode=cwp_functions.returndisposalcode(record.name) #get disposalcode string
+        #disposalcode = record.disposalcode #<<<<TODO Add onchange event
         chemname = record.name.chemname
         chemid = record.name
         item_id = record.id
@@ -72,12 +74,13 @@ def itemedit():
             response.flash = 'record added'
             redirect(URL('item'))
     elif form.errors: #name is None
-       redirect(URL('item'))
+        redirect(URL('item'))
     
     #using web2py built-in helper "A" 
     topactionbutton1 = A(DIV(' Print Label', _class='fa fa-print'), _class='btn btn-block btn-default btn-xs', _id="printButton", target='target1')
     #ID,Chemname,DisposalCode,AccumulationStartDate,Shelf,PrimaryHazard
-    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemid='+str(chemid)), target='target1')
+    #shelveAnchor is used for Javascript on page to change the chemindex id, to calculate new disposal code
+    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _id='shelveAnchor', _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemid='+str(chemid)), target='target1')
     
     return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid,item_id=item_id,topactionbutton1=topactionbutton1,topactionbutton2=topactionbutton2)
 
@@ -167,6 +170,7 @@ def chemindex():
 
 def chemindexedit():
     hprint=''
+
     PageHeader = "Chemical Index"
     hazardlist ='' #hazard list is the potential hazads from hazard table
     chemhazardlist= '' #chemhazardlist is the actual hazards associated with the chemical reflected in the chemindex_hazard_association table
@@ -188,11 +192,11 @@ def chemindexedit():
     
 
     
-    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype',  'hazard', 'treatment','components', 'hazwastecodes', 'comments']#
+    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype', 'treatment','components', 'hazwastecodes', 'comments']#
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
         #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
-        
+
         #Add a hidden field hazard_list to return the result of the Chemical Hazard unordered list
         #Pass value = blank
         #If hazard_list gets value, it means the sortable list as changed, and associations should be updated
@@ -207,10 +211,11 @@ def chemindexedit():
             
         #NOT USED!!!
         #hlist=str(record.hazard)
-        for number in record.hazard: #build hazard list for disposal code
-            #row = db(db.chemindex.id == int(request.vars.name)).select().first()
-            row = db(db.hazard.id == int(number)).select().first()
-            hprint=hprint+row.hazardabbrev
+        
+        #for number in record.hazard: #build hazard list for disposal code
+        #    #row = db(db.chemindex.id == int(request.vars.name)).select().first()
+        #    row = db(db.hazard.id == int(number)).select().first()
+        #    hprint=hprint+row.hazardabbrev
         #hazrows = db.hazard.id.contains(hlist, all=True)
         #recid = row.group[:2].upper()+'-'+row.state.upper()+hprint
 

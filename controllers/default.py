@@ -162,16 +162,18 @@ def render_docs(ids,row):
 
 
 def updatedisposalcode():
-
+    import cwp_functions # to get disposalcode string
     recid = request.vars.name
-    record = db.chemindex(recid)# or redirect(URL('error'))
+    record = db(db.chemindex.id == recid).select().first() #should be only one
+    
+    #record = db.chemindex(record = )# or redirect(URL('error'))
     if (record):
-        rdisposalcode = record.disposalcode
+        rdisposalcode=cwp_functions.returndisposalcode(record.id) #get disposalcode string
     else:
         rdisposalcode = ""
-    return rdisposalcode
+    #return rdisposalcode
     #return "jQuery('#target').html(%s);" % repr(request.vars.name)
-
+    return rdisposalcode#request.vars['name']
 
     #+'-'+','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard']))+'-'+db.tsdf[r['tsdf']].tsdfname[:3].upper()+'-'+db.treatment[r['treatment']].treatnameabbrev.upper()),
 

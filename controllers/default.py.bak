@@ -76,7 +76,7 @@ def generate():
         
 #    elements.append({ 'name': 'Emergency_Response_Phone', 'type': 'T', 'x1': 115.0, 'y1': 40.5, 'x2': 12.0, 'y2': 12.0, 'font': 'Arial', 'size': 12.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, })
 #TESTING TESTING TESTING TESTING TESTING TESTING TESTING TESTING 
-    elements.append({ 'name': 'Emergency_Response_Phone', 'type': 'T', 'x1': 165.00, 'y1': 88.00, 'x2': 12.0, 'y2': 12.0, 'font': 'Arial', 'size': 12.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, })
+    elements.append({ 'name': 'Emergency_Response_Phone', 'type': 'T', 'x1': 20.00, 'y1': 115.00, 'x2': 12.0, 'y2': 12.0, 'font': 'Arial', 'size': 12.0, 'bold': 0, 'italic': 0, 'underline': 0, 'foreground': 0, 'background': 0, 'align': 'I', 'text': '', 'priority': 2, })
     
     
 
@@ -162,16 +162,18 @@ def render_docs(ids,row):
 
 
 def updatedisposalcode():
-
+    import cwp_functions # to get disposalcode string
     recid = request.vars.name
-    record = db.chemindex(recid)# or redirect(URL('error'))
+    record = db(db.chemindex.id == recid).select().first() #should be only one
+    
+    #record = db.chemindex(record = )# or redirect(URL('error'))
     if (record):
-        rdisposalcode = record.disposalcode
+        rdisposalcode=cwp_functions.returndisposalcode(record.id) #get disposalcode string
     else:
         rdisposalcode = ""
-    return rdisposalcode
+    #return rdisposalcode
     #return "jQuery('#target').html(%s);" % repr(request.vars.name)
-
+    return rdisposalcode#request.vars['name']
 
     #+'-'+','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard']))+'-'+db.tsdf[r['tsdf']].tsdfname[:3].upper()+'-'+db.treatment[r['treatment']].treatnameabbrev.upper()),
 

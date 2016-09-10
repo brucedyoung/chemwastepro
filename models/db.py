@@ -184,7 +184,7 @@ db.define_table('unna',
                 Field('unna',type='string'),
                 )
 
-
+import cwp_functions
 db.define_table('chemindex',
                 Field('id','id'),
                 Field('chemname','string'),
@@ -207,7 +207,12 @@ db.define_table('chemindex',
                 #So just the hazard part of the disposal code is compute=lambda r: ','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard'])))
                 
                #Field('disposalcode',compute=lambda r: r['group'][:2].upper()+'-'+r['state'].name.upper()+'-'+','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard']))+'-'+db.tsdf[r['tsdf']].tsdfname[:3].upper()+'-'+db.treatment[r['treatment']].treatnameabbrev.upper()),
-                Field('disposalcode','string', default=''),
+
+
+
+                Field('disposalcode',compute=lambda r: cwp_functions.returndisposalcode(r['id'])),
+                
+
 
                 Field('tsdf','reference tsdf'),
                 Field('treatment','reference treatment'),
@@ -264,6 +269,8 @@ db.define_table('psn', # Proper Shipping Name
 #                format='%(code)s - %(codename)s'
 #               )
 #Physical hazardous waste storage cabinets
+#TODO - should also segregate by Inorganix / Organic
+#Cannot use just Hazard
 db.define_table('cabinet',
                 Field('name','string'),
                 Field('cabinetcode','reference hazard'),
@@ -367,9 +374,12 @@ db.define_table('item',
                 Field('inputnumber','integer'),#a reference from the feeder system, example "12345" OR otp_waste_container_id
                 Field('shelf', 'reference shelf'), #allow container ID to be empty
                 Field('container', 'reference container'),
+
                 #Field('Icontainer', 'reference container'),
+
                 format='%(name)s'
                )
+                
 db.item.state.requires=IS_IN_SET(('Solid','Liquid','Gas'))
 db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
 #db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)

@@ -42,16 +42,25 @@ function () {
         }
     };
 
-    
+
 
     $(".item_name_select").select2(remoteDataConfig)
     .on("change", function(e) {
           // mostly used event, fired to the original element when the value changes
         var data = $(this).select2('data');
-   //Then I take the values like if I work with an array
-       var value = data.id;
-        ajax('{{=URL('default','updatedisposalcode')}}', value, 'target')
+                   //Then I take the values like if I work with an array
+        //Then take selected value and update disposal code on page
+        //sample view object JSON.stringify(data[0].id);
+        
+        var value = data[0].id //get the chemindex number of selected 
+        //replace display disposal div with disposal code
+        ajax('{{=URL('default','updatedisposalcode')}}', ['name'], 'targetDisposalCode')
+        //change shelf button to reflect new chemid
+        // /chemwastepro/inventory/shelve?item_id=1&amp;item_chemid=1078   
+        document.getElementById('shelveAnchor').href="{{=URL('inventory','shelve')}}?item_id={{=item_id}}&item_chemid="+value
 
+        
+        
         })
     ;
     
@@ -78,10 +87,10 @@ function () {
                      <!-- onchange ajax javascript to update disposalcode -->
                             
 
-<select class="item_name_select select2-hidden-accessible" id="item_name" name="name" onchange="ajax('{{=URL('default','updatedisposalcode')}}', ['name'], 'target')" style="width: 100%" tabindex="-1" aria-hidden="true">
+<select class="item_name_select select2-hidden-accessible" id="item_name" name="name"  style="width: 100%" tabindex="-1" aria-hidden="true">
 <option selected="selected" value={{=chemid}}>{{=chemname}}</option>
                             </select> 
-                            <div id="target"></div>
+                            
 
                             
                         </div>
@@ -117,8 +126,16 @@ function () {
                         <div class="col-xs-6">
                             <label>Container</label>
                             <div>{{=form.custom.widget.container}}</div>
+                            
                         </div><!-- ./two column --> 
-                        
+                         <div class="col-xs-6"><!-- two column --> 
+                            <label>Disposal Code</label>
+                            <div id="targetDisposalCode">{{=disposalcode}}</div>
+                        </div>
+                        <div class="col-xs-6">
+                            <label></label>
+                            <div></div>
+                        </div><!-- ./two column --> 
 
                         
                     </div><!-- End box-body-->

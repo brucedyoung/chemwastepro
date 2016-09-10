@@ -2,6 +2,7 @@
 # try something like
 from gluon.custom_import import track_changes; track_changes(True)
 from cwp_htmlhelpers import cwpeditlink
+import cwp_functions
 
 #must use this for list fields to show rendered value, instead of record ids
 def render_docs(ids,row):
@@ -18,13 +19,8 @@ def index():
 import json
 def item():
     PageHeader = "Item"
-    #enterbutton = """<button onclick="document.location=\""""+URL("admin","default","design", args=request.application)+""">admin</button>"""
     addbutton = """<a href ="""+URL("inventory","itemedit")+""" class="btn btn-block btn-success">Add </a>"""
-   
-    #icon="""<div class="col-md-3 col-sm-4">"""+"""<a href="""+URL('inventory','itemedit')+"""/%s><i class="fa fa-fw fa-edit"></i></div></a>"""
-    #editlink=""" <a href="""+URL('inventory','containeredit')+""""class=\"fa fa-fw fa-edit\">Edit</%s>"""
     editlink = """<a href ="""+URL("inventory","itemedit")+"""/%s class="fa fa-fw fa-edit"></a>"""
-    #editlink="""<a href="""+URL('inventory','containeredit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     #datatables
     #http://www.pyguy.com/web2py/web2py-tutorial-using-the-datatable-jquery-grid-plugin-with-web2py/
     #Cannot use this:
@@ -40,21 +36,26 @@ def item():
 def itemedit():
     PageHeader = "Item"
     chemname=""
+    chemid = 0
     cancelbutton = XML( """<a href ="""+URL("inventory","item")+""" class="btn btn-block btn-warning">Cancel </a>""")
+    db.item.container.represent = lambda container, row: container+"hey"
     fields=['name', 'quantity', 'receptacle', 'condition_', 'capacity', 'amount', 'units', 'components', 'comments', 'container', 'shelf']
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.item(request.args(0)) or redirect(URL('error'))
         disposalcode = record.disposalcode #<<<<TODO Add onchange event
         chemname = record.name.chemname
+        chemid = record.name
+        item_id = record.id
         form = SQLFORM(db.item, record,fields=fields)
-       
+
     #FIX if there is no shelf
     # labeltext = "Hazardous Waste    Accum. Date: "+"1-1-1907"+"\n"+"Item: "+str(record.id)+"       "+"Shelf:"+str(record.shelf.shelfcode)+"\n"+str(record.name.chemname)+"\n"+str(record.disposalcode)#Dymo Label
         labeltext =''
-    else:
+    else: # ADD RECORD
         form = SQLFORM(db.item,fields=fields)
         disposalcode  = ''
         labeltext = ''
+        item_id = 0
     form.add_button('Back', URL('other_page'))
     #disposalcode = record.disposalcode #<<<<TODO Add onchange event
     #Eplicitly list fields. When using {{=form.custom.widget.Ireceptacle}}, it will only show and edit listed fields
@@ -62,19 +63,22 @@ def itemedit():
     #form = SQLFORM(db.item, record,fields=fields)
 
     if form.process().accepted:
-       response.flash = 'form accepted'
-       try:
-            if form.vars['name']:
-                record.update_record(**dict(form.vars))#record is updated
-                redirect(URL('item'))
-       except NameError:
+        response.flash = 'form accepted'
+        try:
+            record.update_record(**dict(form.vars))#record is updated
+            redirect(URL('item'))
+        except NameError:
             response.flash = 'record added'
             redirect(URL('item'))
-    elif form.errors:
-       redirect(URL(form.errors))
-       response.flash = 'form has errors'
-    #labeltext = "\n"
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname)
+    elif form.errors: #name is None
+       redirect(URL('item'))
+    
+    #using web2py built-in helper "A" 
+    topactionbutton1 = A(DIV(' Print Label', _class='fa fa-print'), _class='btn btn-block btn-default btn-xs', _id="printButton", target='target1')
+    #ID,Chemname,DisposalCode,AccumulationStartDate,Shelf,PrimaryHazard
+    topactionbutton2 = A(DIV(' Shelve Item', _class='fa fa-sign-in'), _class='btn btn-block btn-default btn-xs', component=URL('shelve'+'?item_id='+str(item_id)+'&item_chemid='+str(chemid)), target='target1')
+    
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,disposalcode=disposalcode, labeltext=labeltext,chemname=chemname,chemid=chemid,item_id=item_id,topactionbutton1=topactionbutton1,topactionbutton2=topactionbutton2)
 
 def container():
     PageHeader = "Container"
@@ -85,6 +89,8 @@ def container():
     container = json.dumps([dict(id=r.id,contnum=r.contnum,psn=r.psn,opendate=str(r.opendate),closedate=str(r.closedate),disposalcode=r.disposalcode,shipment=r.shipment,editlink=editlink  % r.id) for r in rows.render()])#adding render to use represented view of fields
     #form = SQLFORM(db.shipment,editable=True,)
 
+                 
+          
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(container))
 
 def containeredit():
@@ -108,10 +114,6 @@ def containeredit():
     elif form.errors:
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-        
-        
-        
-       
     return dict(form=form,cancelbutton=cancelbutton,)
 
 def shipment():
@@ -153,50 +155,120 @@ def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
     addbutton = """<a href ="""+URL("inventory","chemindexedit")+""" class="btn btn-block btn-success">Add </a>"""
-    db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
+    #db.chemindex.hazard.represent = render_docs # list fields to show rendered value, instead of record ids
+    #Get chemical hazard list from intermediate table
+    #chemassoc_rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
+    
     rows = db(db.chemindex.id>0).select()
-    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.hazard,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
+    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
     return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
 
 
 def chemindexedit():
-
+    hprint=''
     PageHeader = "Chemical Index"
-    fields=['chemname', 'prefix', 'casnum', 'group', 'state', 'disposalcode', 'packtype', 'treatment', 'hazwastecodes', 'hazard', 'components','comments']
+    hazardlist ='' #hazard list is the potential hazads from hazard table
+    chemhazardlist= '' #chemhazardlist is the actual hazards associated with the chemical reflected in the chemindex_hazard_association table
+    
+    
+    # (1) Get available hazards - make ordered list for jquery sortable to pull from
+    hazards = [(r.id, r.hazardname) for r in db(db.hazard).select(orderby=db.hazard.hazard_order)]
+    hazardid, hazardname = zip(*hazards)#seperate into two lists
+    #Create HTML unordered list
+    for idx, r in enumerate(hazardid):
+        hazardlist += str(LI(hazardname[idx], _class='ui-state-default ui-sortable-handle', _id=hazardid[idx]))
+        
+    #hazardrows = db(db.hazard.id>0).select()
+    #for r in hazardrows:
+    #    for idx,item in enumerate(list):
+    #    hazardlist += str(LI(r.hazardname, _class='ui-state-default ui-sortable-handle', _id=r.id))
+ 
+    #hazardlist = hazards
+    
+
+    
+    fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype',  'hazard', 'treatment','components', 'hazwastecodes', 'comments']#
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
         #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
-        form = SQLFORM(db.chemindex, record,fields=fields)
         
-        hprint=''
+        #Add a hidden field hazard_list to return the result of the Chemical Hazard unordered list
+        #Pass value = blank
+        #If hazard_list gets value, it means the sortable list as changed, and associations should be updated
+        #form = SQLFORM(db.chemindex, record,fields=fields,hidden=dict(hazard_list=''))
+        #NORMALIZED
+        rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
+        for row in rows:
+            chemhazardlist += str(LI(row.hazard_id.hazardname, _class='ui-state-default ui-sortable-handle', _id=row.hazard_id))
+            
+
+
+            
+        #NOT USED!!!
         #hlist=str(record.hazard)
-        for number in record.hazard:
+        for number in record.hazard: #build hazard list for disposal code
             #row = db(db.chemindex.id == int(request.vars.name)).select().first()
             row = db(db.hazard.id == int(number)).select().first()
             hprint=hprint+row.hazardabbrev
         #hazrows = db.hazard.id.contains(hlist, all=True)
         #recid = row.group[:2].upper()+'-'+row.state.upper()+hprint
-        
-        
-    else:
-        form = SQLFORM(db.chemindex,fields=fields)
+
+
+    else:#ADD NEW RECORD
+        form = SQLFORM(db.chemindex,fields=fields,hidden=dict(hazard_list=''))
         disposalcode  = ''
     form.add_button('Back', URL('other_page'))
     cancelbutton = XML( """<a href ="""+URL("inventory","container")+""" class="btn btn-block btn-warning">Cancel </a>""")
 
-    
-    #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.js'))
-    #response.files.append(URL(r=request,c='static/multiselect',f='jquery.multiSelect.css'))
-
     if form.process().accepted:
        response.flash = 'form accepted'
        try:
+            #update hazard list
+            ohazard_list = []
+            hazard_list=(request.vars.hazard_list)
+            if(hazard_list!=''): #the chemical hazard sortable UL was modified
+                ohazard_list=hazard_list.split(",") # create ordered list
+                db(db.chemindex_hazard_association.chemindex_id==form.vars.id).delete() #Delete all associations for chemindexid
+                for index, hazardid in enumerate(ohazard_list):
+                    db.chemindex_hazard_association.insert(chemindex_id=form.vars.id,hazard_id=hazardid,hazard_order=index)    
             record.update_record(**dict(form.vars))#record is updated
-            redirect(URL('chemindex'))
+            redirect(URL('chemindex')+str(ohazard_list))
+            
+         
        except NameError:
+         
+        
             response.flash = 'record added'
             redirect(URL('chemindex'))
-    elif form.errors:
+    elif form.errors: #problems with required fields
        redirect(URL(form.errors))
        response.flash = 'form has errors'
-    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint)
+
+
+    
+    return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form,hprint=hprint,chemhazardlist=XML(chemhazardlist),hazardlist=XML(hazardlist))
+
+
+def shelve():
+    #use this to control the dropdown on the item edit page.
+    #That way, the user has to save the record for changes to take place.
+    #otherwise, cancels
+    responsestr = "no"
+    chemhazardlistc=""
+    item_id=request.vars.item_id
+    item_chemid=request.vars.item_chemid
+    if ((item_id > "") & (item_chemid > "")):
+        chemindex_row = db(db.chemindex.id == int(item_chemid)).select().first() #should be only one
+        disposalcode=cwp_functions.returndisposalcode(chemindex_row.id) #get disposalcode string
+        row = db(db.shelf.disposalcode == disposalcode).select().first()#get the first one. Could reduce by creation date or shelf number
+    if row is None:
+        #user alert of change
+        responsestr = "No shelf found"
+        #javascript making change
+        response.js = "var element = document.getElementById('item_shelf');element.value = 0;"
+    else:
+        #user alert of change
+        responsestr = "Item shelved"
+        #javascript making change
+        response.js =  ("var element = document.getElementById('item_shelf');element.value = %s;" % row.id)
+    return (responsestr)
