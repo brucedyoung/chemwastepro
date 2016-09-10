@@ -29,8 +29,11 @@ def item():
     #Because we need the represented value, like "chemical Name"
     #So we do this:
     rows = db(db.item.id>0).select()
+    
+ 
     #cannot use render, because need r.name as number to calculate disposal code by function, so use direct references for remainder of fields that need represent
-    item = json.dumps([dict(id=r.id,name=r.name.chemname,disposalcode=cwp_functions.returndisposalcode(r.name),pounds=r.pounds,container=r.container.contnum,shelf=r.shelf.shelfcode,editlink=editlink  % r.id) for r in rows])# do not rows.render()
+    #added test if related record exists, example: if r.container else "", so no error if there is no related record
+    item = json.dumps([dict(id=r.id,name=r.name.chemname if r.name else "",disposalcode=cwp_functions.returndisposalcode(r.name),pounds=r.pounds,container=r.container.contnum if r.container else "",shelf=r.shelf.shelfcode if r.shelf else "",editlink=editlink  % r.id) for r in rows])# do not rows.render()
     return dict(PageHeader=PageHeader,addbutton=XML(addbutton),results=XML(item))
 
 

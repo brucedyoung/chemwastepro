@@ -184,7 +184,6 @@ db.define_table('unna',
                 Field('unna',type='string'),
                 )
 
-import cwp_functions
 db.define_table('chemindex',
                 Field('id','id'),
                 Field('chemname','string'),
@@ -240,7 +239,6 @@ db.chemindex.treatment.requires = IS_EMPTY_OR(IS_IN_DB(db,'treatment.id','%(trea
 db.chemindex.group_.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic'))) # IN = Inorganic, OR = Organic
 db.chemindex.state.requires=IS_EMPTY_OR(IS_IN_SET(('Solid','Liquid','Gas')))
 db.chemindex.unna.requires = IS_EMPTY_OR(IS_IN_DB(db,'unna.id','%(unna)s'))
-db.chemindex.discounted_total = Field.Method(lambda row :row.chemindex.fedwastecode)
 
 #rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
 #        for row in rows:
@@ -278,7 +276,7 @@ db.define_table('cabinet',
                 )
 #Physical shelves or tubs inside the cabinets
 db.define_table('shelf',
-                Field('shelfcode','string'),
+                Field('shelfcode','string',default=""),
                 Field('disposalcode','string'),
                 Field('scabinet','reference cabinet'),
                 format='%(shelfcode)s'
@@ -386,8 +384,6 @@ db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
 #db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
 #db.item.name.widget=SQLFORM.widgets.string.widget
 #db.item.name.widget=SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
-
-#db.item.disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
 #db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
 
 

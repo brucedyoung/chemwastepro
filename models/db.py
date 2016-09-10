@@ -184,7 +184,6 @@ db.define_table('unna',
                 Field('unna',type='string'),
                 )
 
-import cwp_functions
 db.define_table('chemindex',
                 Field('id','id'),
                 Field('chemname','string'),
@@ -277,7 +276,7 @@ db.define_table('cabinet',
                 )
 #Physical shelves or tubs inside the cabinets
 db.define_table('shelf',
-                Field('shelfcode','string'),
+                Field('shelfcode','string',default=""),
                 Field('disposalcode','string'),
                 Field('scabinet','reference cabinet'),
                 format='%(shelfcode)s'
@@ -372,7 +371,7 @@ db.define_table('item',
                 Field('comments','text'),
                 Field('input_id','string'),#a reference from the feeder system, example "From Dr. Bromer's lab"
                 Field('inputnumber','integer'),#a reference from the feeder system, example "12345" OR otp_waste_container_id
-                Field('shelf', 'reference shelf'), #allow container ID to be empty
+                Field('shelf', 'reference shelf', default=0), #allow container ID to be empty
                 Field('container', 'reference container'),
 
                 #Field('Icontainer', 'reference container'),
@@ -385,8 +384,6 @@ db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
 #db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
 #db.item.name.widget=SQLFORM.widgets.string.widget
 #db.item.name.widget=SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
-
-#db.item.disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
 #db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
 
 
