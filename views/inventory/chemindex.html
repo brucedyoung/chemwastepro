@@ -10,6 +10,9 @@
 <!-- FastClick -->
 <script src="{{=URL('static','plugins/fastclick/fastclick.js')}}"></script>
 
+
+
+
    <table id="chem-table" class="table table-bordered table-hover dataTable" cellspacing="0" width="100%">
         <thead>
             <tr role="row">
@@ -21,7 +24,7 @@
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">TSDF</th>
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Treatment</th>
                     <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Hazard</th>
-                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">CA Wate Codes</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">CA Waste Codes</th>
                     
                     
                 <th>edit</th>
@@ -29,23 +32,26 @@
                 </thead>
      </table>
 
-
 <script type="text/javascript">
-$(document).ready(function(){
-    $("#chem-table").DataTable({
-        data:  {{=results}},
-        columns: [
+$(document).ready(function() {
+    $('#chem-table').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": "{{=URL('serverprocessing','chemindex')}}",
+         "columns": [
             { data: 'id' },
             { data: 'chemname' },
-            { data: 'group' },
+            { data: 'group_' },
             { data: 'state' },
             { data: 'disposalcode' },
             { data: 'tsdf' },
             { data: 'treatment' },
-            { data: 'hazard' },
+            { data: 'hazardlistabbrev' },
             { data: 'hazwastecodes' },
             { data: 'editlink' },
         ]
-    })
-});
+
+    } );
+} );
+
 </script>

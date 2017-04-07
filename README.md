@@ -1,14 +1,12 @@
 # chemwastepro
 Chemical Waste Management Program
 
- DO NOT USE. IT IS NOT IN A DEPLOYABLE STATE. I'm working on it every day.
-  
- A preview of the functionality: https://brucedyoung.pythonanywhere.com/chemwastepro
-  
+ A working preview of the functionality: https://brucedyoung.pythonanywhere.com/chemwastepro
+
+ Database Entity Diagram: https://brucedyoung.pythonanywhere.com/chemwastepro/static/dbgraph.pdf
+ 
  Sample Manifest Printing: https://brucedyoung.pythonanywhere.com/chemwastepro/manifest/generate
  Includes dynamic placement of elements
- 
- Database Entity Diagram: https://brucedyoung.pythonanywhere.com/chemwastepro/static/dbgraph.pdf
  
  Sample JSON query against chemical index: https://brucedyoung.pythonanywhere.com/chemwastepro/default/getchemindex.json?q=ace
  
@@ -34,3 +32,10 @@ X-Frame-Options:SAMEORIGIN
 Secure and HTTPS only cookies are enabled under HTTPS
 See /chemwastepro/models/db.py
 session._secure=True
+
+TODO
+Chemical Index Synonyms
+Send item to new shelf based on Disposal Code
+Bulk Shelving
+Bulk Label Printing
+Transfer to container process

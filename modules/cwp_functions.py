@@ -5,6 +5,8 @@ from gluon import current
 
 #cwp_functions
 
+#Disposal Code and Hazard list are generated dynamically
+
 def shelveitem(item_id):
     # This process processes items with blank container or shelf number
     # 1. Check for  blank item
@@ -43,3 +45,13 @@ def returndisposalcode(chemindex_id):
         else:
             disposalcode = ""
     return (disposalcode)
+
+def returnhazardlistabbrev(chemindex_id):
+    hazardlist=''
+    db = current.db
+    hazrows = db(db.chemindex_hazard_association.chemindex_id == chemindex_id).select(orderby=db.chemindex_hazard_association.hazard_order)
+    for hazrow in hazrows:
+        hazardlist += hazrow.hazard_id.hazardabbrev+","
+    #remove trailing comma
+    hazardlist = hazardlist[:-1]
+    return (hazardlist)

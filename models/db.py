@@ -14,14 +14,14 @@ from gluon.contrib.appconfig import AppConfig
 ## once in production, remove reload=True to gain full speed
 myconf = AppConfig(reload=True)
 #Put a file in the root level of web2py, alongside the applications folder, with the connection string
-#example connection string = mysql://db_user:Passwrod!@localhost/OHWM
+#example connection string = mysql://db_user:Password!@localhost/chemwastepro
 file = open('chemwasteproconnectionstring.txt', 'r')
-connectionstring = file.readline().rstrip('\n')
+connectionstring = file.readline().rstrip('\n') #strip newline just in case
 file.close()
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
     #db = DAL(myconf.take('db.uri'), pool_size=myconf.take('db.pool_size', cast=int), check_reserved=['all'])
-    db = DAL(connectionstring,migrate=False)
+    db = DAL(connectionstring,migrate=False,lazy_tables=True)
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore+ndb')
@@ -91,6 +91,7 @@ topactionbutton1 = ""
 topactionbutton2 = ""
 topactionbutton3 = ""
 topactionbutton4 = ""
+enterbutton = cancelbutton = ''
 
 
 #########################################################################
@@ -143,7 +144,8 @@ db.define_table('condition_',
                 Field('name','string'),
                 format='%(name)s'
                )
-
+#Conversions are needed to match shipping requirements. For example, asbestos may be collected as pounds, but shipped as yards
+#Also, billing may be based on a fixed unit, like gallons
 db.define_table('conversions',
                 Field('unitsfrom', 'reference units'),
                 Field('conversionfactor', 'decimal(65,10)'),
@@ -160,7 +162,6 @@ db.define_table('tsdf',
                 format='%(tsdfname)s'
                 )
 #Treatment codes come from http://www3.epa.gov/epawaste/hazard/transportation/manifest/pdf/codes.pdf
-
 db.define_table('treatment',
                 Field('treatmentname','string'),
                 #Hazardous Waste Report TreatmentCode
@@ -183,47 +184,22 @@ db.define_table('unna',
                 Field('name',type='string'),
                 Field('unna',type='string'),
                 )
-
+import cwp_functions
 db.define_table('chemindex',
                 Field('id','id'),
                 Field('chemname','string'),
-                #Field('chemname','string', requires=IS_NOT_EMPTY())
-                #Field('prefix','string'),
-                #Field('cmidfix','string'),
-                #Field('csuffix','string'),
                 Field('casnum','string'),
                 Field('state','string'),
                 Field('group_','string'), #MYSQL reserved word, trailing underscore
-                # The disposal code uses a nested lambda
-                # the first lamda using record r computes the value for the field
-                #the second lambda using v joins the values from the chazard field which contains a list
-                #iterating with lambda
-                #[v * 5 for v in x]
-                #is the same as
-                #y = map(lambda v : v+'-', x) - which is a dash separated list
-                #use join to concatenate the list using a comma
-                #','.join(lst)
-                #So just the hazard part of the disposal code is compute=lambda r: ','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard'])))
-                
-               #Field('disposalcode',compute=lambda r: r['group'][:2].upper()+'-'+r['state'].name.upper()+'-'+','.join(map(lambda v : db.hazard[v].hazardabbrev , r['chazard']))+'-'+db.tsdf[r['tsdf']].tsdfname[:3].upper()+'-'+db.treatment[r['treatment']].treatnameabbrev.upper()),
-
-
-
-                Field('disposalcode',compute=lambda r: cwp_functions.returndisposalcode(r['id'])),
-                
-
-
+                #DONT USE - Try to compute Disposal Code dynmaically in every case
+                #Field('disposalcode',compute=lambda r: cwp_functions.returndisposalcode(r['id'])),
+                Field('disposalcode'),
+                Field('hazard',compute=lambda r: cwp_functions.returnhazardlistabbrev(r['id'])),
                 Field('tsdf','reference tsdf'),
                 Field('treatment','reference treatment'),
-                Field('hazwastecodes',compute=lambda r: ','.join(map(lambda v : db.fedwastecode[v].code , r['fedwastecode']))),
-                #Field('molecularformula','string'), REMOVE - not necessary for hazard identification
-
-                #list:reference is a way to introduce many to many relationship without using join table
-                #list can be reordered. For example, 1=Flammable, 2 = Corrosive
-                #list is ordered on creation
-                #['1','2'] list can be reordered to reflect Corrosive,Flammable = ['2','1']
-                #Field('hazard','list:string', requires = IS_EMPTY_OR(IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True))),
-                #State Hazardous Waste Codes - http://www3.epa.gov/epawaste/inforesources/data/br13/br13-spec ification.pdf
+                #Field('hazwastecodes',compute=lambda r: ','.join(map(lambda v : db.fedwastecode[v].code , r['fedwastecode']))),
+                Field('hazwastecodes'),
+                #State Hazardous Waste Codes - http://www3.epa.gov/epawaste/inforesources/data/br13/br13-specification.pdf
                 Field('fedwastecode','list:string', requires = IS_EMPTY_OR(IS_IN_DB(db,'fedwastecode.id', db.fedwastecode._format,multiple=True))), #like D001, D002
                 Field('dotpsn','boolean'), #Department of Transportation Proper Shipping Name - if checked, do not edit name
                 Field('packtype','string', default=''),
@@ -231,19 +207,26 @@ db.define_table('chemindex',
                 Field('components','text'),# similar to mixture
                 Field('unna','reference unna'),# United Nations/United State List of Hazardous Materials
                 Field('pg','string'), #Packing Group
+                Field('hazardlistabbrev'),
+
+                #Field('hazardlistabbrev',compute = lambda r: (str(r['id']))),
                 format='%(chemname)s',
                )
+               
+
+                
 db.chemindex.packtype.requires=IS_EMPTY_OR(IS_IN_SET(('','LP','BU')))
 db.chemindex.tsdf.requires = IS_EMPTY_OR(IS_IN_DB(db,'tsdf.id','%(tsdfname)s'))
 db.chemindex.treatment.requires = IS_EMPTY_OR(IS_IN_DB(db,'treatment.id','%(treatnameabbrev)s'))
 db.chemindex.group_.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic'))) # IN = Inorganic, OR = Organic
 db.chemindex.state.requires=IS_EMPTY_OR(IS_IN_SET(('Solid','Liquid','Gas')))
 db.chemindex.unna.requires = IS_EMPTY_OR(IS_IN_DB(db,'unna.id','%(unna)s'))
+db.chemindex.editlink = Field.Virtual('editlink', lambda row: """<a href="""+URL('inventory','chemindexedit')+"""/"""+str(row.chemindex.id)+"""><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>""")
 
-#rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
-#        for row in rows:
-#            chemhazardlist += str(LI(row.hazard_id.hazardname, _class='ui-state-default ui-sortable-handle', _id=row.hazard_id))
 
+
+
+#db.item.total_price =         Field.Virtual('total_price',lambda row: row.item.unit_price * row.item.quantity)
 
 
 #Reference http://blog.jotbe-fx.de/articles/2522/web2py-Normalized-many-to-many-model-with-multiselect-drop-down
@@ -251,7 +234,6 @@ db.define_table('chemindex_hazard_association',
                 Field('chemindex_id', 'reference chemindex'),
                 Field('hazard_id', 'reference hazard'),
                 Field('hazard_order', 'integer'),
-                
                )
 
 #db.chemindex.hazards_st = Field.Method(lambda id,row:db(db.chemindex_hazard_association.chemindex_id == row.id).select().first().hazard_id)
@@ -261,19 +243,18 @@ db.define_table('psn', # Proper Shipping Name
                       required=True),
                 format='%(propershippingname)s'
                )
-# Possible cabinet primary hazards - use hazards table instead
-#db.define_table('cabinetcode',
-#                Field('code','string'),
-#                Field('codename','string'),
-#                format='%(code)s - %(codename)s'
-#               )
+
 #Physical hazardous waste storage cabinets
-#TODO - should also segregate by Inorganix / Organic
+#TODO - should also segregate by Inorganic / Organic
 #Cannot use just Hazard
 db.define_table('cabinet',
                 Field('name','string'),
                 Field('cabinetcode','reference hazard'),
+                Field('group_','string'), #MYSQL reserved word, trailing underscore
                 )
+# ALLOW EMPTY??? Or require cabinet group
+db.cabinet.group_.requires=IS_EMPTY_OR(IS_IN_SET(('Inorganic','Organic'))) # IN = Inorganic, OR = Organic
+
 #Physical shelves or tubs inside the cabinets
 db.define_table('shelf',
                 Field('shelfcode','string',default=""),
@@ -282,6 +263,7 @@ db.define_table('shelf',
                 format='%(shelfcode)s'
                )
 db.shelf.scabinet.requires = IS_IN_DB(db,'cabinet.id','%(name)s')#make drop down list of cabinets
+
 #drum, pallet, bin
 db.define_table('shipment',
                 Field('manifest',type='string',
@@ -291,20 +273,19 @@ db.define_table('shipment',
 db.define_table('containertype',
                 Field('containertypecode',type='string',required=True),
                 Field('name',type='string'),
-
                 format='%(containertypecode)s - %(name)s'
                )
 
+# If you have more than one EPA ID number site shipping Hazardous Waste Manifests
 db.define_table('generator',
                 Field('name',type='string'),
                 Field('epaid',type='string'), #Environmental Protection Agency Identification Number
                 Field('address',type='string'),
                 )
 
-#PSN= Proper Shipping Name
 db.define_table('container',
                 Field('contnum','string',default="1000"),#an alphanumeric identifier for container. Regulations say drum number must be unique per shipment
-                Field('psn','reference psn'),
+                Field('psn','reference psn'), #PSN= Proper Shipping Name
                 Field('opendate','date'),
                 Field('closedate','date'),
                 Field('accumulationstartdate','date'),
@@ -333,10 +314,8 @@ db.define_table('container',
                 Field('pggroup','string',requires = IS_EMPTY_OR(IS_IN_SET(('FORBDN','PG I','PG I-II','PG I-III','PG II','PG II-III','PG III')))), # packing group
                 Field('psndescriptor','string'),
                 Field('hazardousproperties','list:string', requires = IS_IN_DB(db,'hazard.id', db.hazard._format,multiple=True)),
-               
                 format='%(contnum)s'
                )
-#db.container.cstatefedwastecode.widget = multiselect_widget
 db.container.tsdf.requires = IS_EMPTY_OR(IS_IN_DB(db,'tsdf.id','%(tsdfname)s'))
 db.container.containerstyle.requires=IS_EMPTY_OR(IS_IN_SET(('Bin','Box','Pail','Drum','End Dump','Pallet','Salvage','Tank Truck','Cylinder')))    
 db.container.containersize.requires=IS_EMPTY_OR(IS_IN_SET(('','05G','08G','10G','12G','15G')))
@@ -352,11 +331,8 @@ db.container.cstate.widget = SQLFORM.widgets.options.widget #make drop-down list
 db.container.unna.requires = IS_EMPTY_OR(IS_IN_DB(db,'unna.id','%(unna)s')), #allow container ID to be empty 
 db.container.unna.widget = SQLFORM.widgets.options.widget #make drop-down list    
 
-
 db.define_table('item',
                 Field('name','reference chemindex',required=True),
-                Field('disposalcode',compute=lambda r: db.chemindex[r['name']].disposalcode), 
-                #Field('disposalcode = Field.Lazy(lambda r: db.chemindex[r['name']].disposalcode),
                 Field('condition_','reference condition_'),#,widget=SQLFORM.widgets.options.widget,requires=[IS_IN_DB(db, db.condition_.name)]),
                 Field('state','string'),
                 Field('amount','decimal(65,2)'),
@@ -373,21 +349,10 @@ db.define_table('item',
                 Field('inputnumber','integer'),#a reference from the feeder system, example "12345" OR otp_waste_container_id
                 Field('shelf', 'reference shelf', default=0), #allow container ID to be empty
                 Field('container', 'reference container'),
-
-                #Field('Icontainer', 'reference container'),
-
                 format='%(name)s'
                )
-                
 db.item.state.requires=IS_IN_SET(('Solid','Liquid','Gas'))
 db.item.name.requires = IS_EMPTY_OR(IS_IN_DB(db,'chemindex.id','%(chemname)s'))
-#db.item.name.widget = SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
-#db.item.name.widget=SQLFORM.widgets.string.widget
-#db.item.name.widget=SQLFORM.widgets.autocomplete(request, db.chemindex.chemname, id_field=db.chemindex.id)
-#db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(id)s'))
-
-
-
 db.item.container.requires = IS_EMPTY_OR(IS_IN_DB(db,'container.id','%(id)s %(contnum)s')), #allow container ID to be empty - Put ID and container key, in case container key is blank
 db.item.container.widget = SQLFORM.widgets.options.widget #make drop-down list    
 db.item.units.requires = IS_EMPTY_OR(IS_IN_DB(db,'units.id','%(name)s')), #allow units to be empty
@@ -399,13 +364,8 @@ db.item.condition_.widget = SQLFORM.widgets.options.widget #make drop-down list
 db.item.shelf.requires = IS_EMPTY_OR(IS_IN_DB(db,'shelf.id','%(shelfcode)s %(disposalcode)s')), #allow condition to be empty
 db.item.shelf.widget = SQLFORM.widgets.options.widget #make drop-down list         
 
-                                                                                                              
-
-                                                                                                              
- #requires=IS_EMPTY_OR(IS_IN_DB(db.A,'A.id','%(name)s'))
-#b.define_table('soso', Field('lolo'), Field('moon', widget=SQLFORM.widgets.options.widget, requires=[IS_IN_DB(db, db.country.name), IS_UPPER()]))
-
 #for printing manifest to PDF 
+#Each record is a form layout
 db.define_table('manifest_layout',
                 #Number elements rom 1000 to make room from change.
                 # Elements on first page start with 1000 + box number. Example: #1 Generator number = element 1001
@@ -427,7 +387,6 @@ db.define_table('manifest_layout',
                 Field('align','string'),
                 Field('priority','integer'),
                 Field('multiline','integer'),
-                
                 )
 
 #FLAMMABLE LIQUIDS, N.O.S.
@@ -437,11 +396,11 @@ db.define_table('site',
                 Field('epaid','string'),
                 format='%(sitename)s'
                )
+
+
 ## Fill empty tables
 #if db(db.person).isempty():
     #db.chemindex.cname="Acetone"
-enterbutton = cancelbutton = ''
-
 #for row in db(db.chemindex.id > 0).select():
 #    if (row.id % 2 == 0):
 #        row.update_record(treatment=1)

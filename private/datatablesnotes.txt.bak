@@ -1,0 +1,67 @@
+Web2py and Datatables are cool together.
+It is very simple to implement, and other slices have a great job of explaining.
+I'll go over the basics quickly.
+
+include Javascript - jQuery should already be available:
+//code.jquery.com/jquery-1.12.4.js
+https://cdn.datatables.net/1.10.13/js/jquery.dataTables.min.js
+<script src="{{=URL('static','plugins/datatables/dataTables.bootstrap.min.js')}}"></script>
+<!-- DataTables -->
+<script src="{{=URL('static','plugins/datatables/jquery.dataTables.min.js')}}"></script>
+
+In your html add the function:
+<script type="text/javascript">
+$(document).ready(function(){
+    $("#chem-table").DataTable({
+        data:  {{=results}},
+        columns: [
+            { data: 'id' },
+            { data: 'chemname' },
+            { data: 'group_' },
+            { data: 'state' },
+            { data: 'disposalcode' },
+            { data: 'tsdf' },
+            { data: 'treatment' },
+            { data: 'hazardlistabbrev' },
+            { data: 'hazwastecodes' },
+            { data: 'editlink' },
+        ]
+    })
+});
+</script>
+
+Add your table and columns that match the function:
+   <table id="chem-table" class="table table-bordered table-hover dataTable" cellspacing="0" width="100%">
+        <thead>
+            <tr role="row">
+                <th class="sorting_asc" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-sort="ascending" aria-label="Rendering engine: activate to sort column descending">ID</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Browser: activate to sort column ascending">Chemical Name</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="Engine version: activate to sort column ascending">Group</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">State</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Disposal Code</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">TSDF</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Treatment</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">Hazard</th>
+                    <th class="sorting" tabindex="0" aria-controls="example2" rowspan="1" colspan="1" aria-label="CSS grade: activate to sort column ascending">CA Waste Codes</th>
+                    
+                    
+                <th>edit</th>
+            </tr>
+                </thead>
+     </table>
+
+In your controller find your records, and send to the page:
+rows = db(db.chemindex.id>0).select(db.chemindex.id,db.chemindex.chemname,db.chemindex.group_,db.chemindex.state,db.chemindex.disposalcode,db.chemindex.tsdf,db.chemindex.treatment,db.chemindex.hazwastecodes,db.chemindex.hazard,db.chemindex.hazardlistabbrev).as_list()
+
+    #rendered_row = rows.render(0, fields=[db.mytable.duetime])
+    #rows = row.as_list()
+    #chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group_=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon) for r in cirows.render(fields=[db.chemindex.myfield])#adding render to use represented view of fields
+
+OK, now that is working, what do we do if we need to transform or there are fields that need rendering in the rows?
+No problem, just query your rows as usual without making a list and loop through them to do any needed processing, then dump as json:
+rows = db(db.chemindex.id>0).select(db.chemindex.id,db.chemindex.chemname,db.chemindex.group_,db.chemindex.state,db.chemindex.disposalcode,db.chemindex.tsdf,db.chemindex.treatment,db.chemindex.hazwastecodes,db.chemindex.hazard,db.chemindex.hazardlistabbrev)
+#chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group_=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon) for r in cirows.render(fields=[db.chemindex.myfield])#adding render to use represented view of fields
+
+This works fine for a small number of records, but while the select is fast, the for loop can be really slow. The problem is that the methods listed above load all the data into the page for datatables to have available. Processing all the data to render a few records works if it doesn't take too long.
+
+For larger data sets you are forced to use Datatables Server Side processing

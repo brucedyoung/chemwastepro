@@ -1,0 +1,19 @@
+Mixture
+This system is predicated on every item matching a chemical index record.
+Chemical index records are created for mixures.
+Some chemical waste systems take that to the next step and track every component of mixtures.
+Although this would be an easy thing to add, this system does not do that.
+After years of experience, it was found that the cost of inputting all of the components was greater than the benefit.
+The system assumes that a human will make the hazard determination of mixtures.
+
+
+There are two main benefits to inputting all mixture components.
+- The primary benefit of inputting all mixture components is to identify special chemicals that have special tracking or reporting requirements.
+This sounds useful in theory. For example, if any mercury is in a mixture it must be disposed of and reported differently. If all components had chemical index entries, the program could see mercury as a component in the mixture and set the hazard and disposal code automatically. However the human cost of inputting the vast proportion of components that do not need special handling far outweighs the cost of manually scanning components for chemicals like mercury.
+
+- The secondary benefit is to attempt to automatically determine the hazard of a mixture by the combination of its components hazards.
+This likewise makes sense on paper, but has problems in practice. A simple mixture example is Acetone 20% and Water 80%. Automatically combining the hazards would make the mixture flammable, but a flash test would fail. Adding a minimum percentage calculation to the Acetone might work in this instance, but would add unneeded complexity and would work inaccurately in other cases.
+
+
+Named mixtures are handled like straight chemicals.
+If a mixture is found repeatedly it makes sense to make a chemical index entry for it. That is why there a components field in the chemical index record, to populate the item components automatically. Be careful not to make the mistake of creating entries that are only used onnce or rarely, that can inflate the chemical index.

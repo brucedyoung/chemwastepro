@@ -22,9 +22,15 @@
     <!-- include stylesheets -->
 
     <!-- <link rel="stylesheet" href="{{=URL('static','css/web2py-bootstrap3.css')}}"/>-->
+
     <link rel="shortcut icon" href="{{=URL('static','images/favicon.ico')}}" type="image/x-icon">
     <link rel="apple-touch-icon" href="{{=URL('static','images/favicon.png')}}">
 
+      
+      
+      <!--custom font for chemwastepro -->
+    <link rel="stylesheet" href="{{=URL('static','css/fontello.css')}}"/>
+    <script src="{{=URL('static','js/config.json')}}"></script>
           <!-- START AdminLTE 2 -->
           <!-- Bootstrap 3.3.5 -->
     <link rel="stylesheet" href="{{=URL('static','css/bootstrap.min.css')}}"/>
@@ -147,10 +153,10 @@
           <ul class="sidebar-menu">
             <li class="header">Main</li>
             <!-- Optionally, you can add icons to the links -->
-            <li><a href={{=URL('inventory','item')}}><i class="fa fa-link"></i> <span>Item</span></a></li>
-            <li><a href={{=URL('inventory','container')}}><i class="fa fa-link"></i> <span>Container</span></a></li>
+            <li><a href={{=URL('inventory','item')}}><i class="cwp icon-24146"></i> <span>Item</span></a></li>
+            <li><a href={{=URL('inventory','container')}}><i class="cwp icon-barrel"></i> <span>Container</span></a></li>
             <li><a href={{=URL('inventory','shipment')}}><i class="fa fa-link"></i> <span>Shipment</span></a></li>
-            <li><a href={{=URL('inventory','chemindex')}}><i class="fa fa-link"></i> <span>Chemical Index</span></a></li>
+            <li><a href={{=URL('inventory','chemindex')}}><i class="cwp icon-kilotau-icon"></i> <span>Chemical Index</span></a></li>
             <li><a href={{=URL('reports','index')}}><i class="fa fa-link"></i> <span>Reports</span></a></li>
             <!---<li class="treeview">
               <a href="#"><i class="fa fa-link"></i> <span>Multilevel</span> <i class="fa fa-angle-left pull-right"></i></a>

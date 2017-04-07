@@ -157,7 +157,7 @@ def shipmentedit():
        response.flash = 'form has errors'
 
     return dict(PageHeader=PageHeader,cancelbutton=cancelbutton,form=form)
-
+import gluon.contrib.simplejson
 def chemindex():
     PageHeader = "Chemical Index"
     icon="""<a href="""+URL('inventory','chemindexedit')+"""/%s><div class="col-md-3 col-sm-4"><i class="fa fa-fw fa-edit"></i></div></a>"""
@@ -166,14 +166,24 @@ def chemindex():
     #Get chemical hazard list from intermediate table
     #chemassoc_rows = db(db.chemindex_hazard_association.chemindex_id == record.id).select(orderby=db.chemindex_hazard_association.hazard_order)
     
-    rows = db(db.chemindex.id>0).select()
-    chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon  % r.id) for r in rows.render()])#adding render to use represented view of fields
-    return dict(PageHeader=PageHeader,results=XML(chemindex),addbutton=XML(addbutton))
+    #Normalized hazard list
+     ###SO SLOW!!!!
+    #Calculating disposalcode and hazard takes too long
+    
+
+    rows = db(db.chemindex.id>0).select(db.chemindex.id,db.chemindex.chemname,db.chemindex.group_,db.chemindex.state,db.chemindex.disposalcode,db.chemindex.tsdf,db.chemindex.treatment,db.chemindex.hazwastecodes,db.chemindex.hazard,db.chemindex.hazardlistabbrev).as_list()
+
+    #rendered_row = rows.render(0, fields=[db.mytable.duetime])
+    #rows = row.as_list()
+    #chemindex = json.dumps([dict(id=r.id,chemname=r.chemname,group_=r.group_,state=r.state,disposalcode=r.disposalcode,tsdf=r.tsdf,treatment=r.treatment,hazwastecodes=r.hazwastecodes,hazard=r.treatment,editlink=icon) for r in cirows.render(fields=[db.chemindex.myfield])#adding render to use represented view of fields
+                                        
+    return dict(PageHeader=PageHeader,results=XML(json.dumps(rows)),addbutton=XML(addbutton))
+
+
 
 
 def chemindexedit():
     hprint=''
-
     PageHeader = "Chemical Index"
     hazardlist ='' #hazard list is the potential hazads from hazard table
     chemhazardlist= '' #chemhazardlist is the actual hazards associated with the chemical reflected in the chemindex_hazard_association table
@@ -185,21 +195,12 @@ def chemindexedit():
     #Create HTML unordered list
     for idx, r in enumerate(hazardid):
         hazardlist += str(LI(hazardname[idx], _class='ui-state-default ui-sortable-handle', _id=hazardid[idx]))
-        
-    #hazardrows = db(db.hazard.id>0).select()
-    #for r in hazardrows:
-    #    for idx,item in enumerate(list):
-    #    hazardlist += str(LI(r.hazardname, _class='ui-state-default ui-sortable-handle', _id=r.id))
- 
-    #hazardlist = hazards
-    
-
-    
     fields=['chemname', 'casnum', 'group_', 'state', 'disposalcode', 'packtype', 'treatment','components', 'hazwastecodes', 'comments']#
     if (request.args(0)): #UPDATE RECORD or INSERT RECORD
         record = db.chemindex(request.args(0)) or redirect(URL('error'))
-        #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
 
+        #disposalcode = record.Idisposalcode #<<<<TODO Add onchange event
+        
         #Add a hidden field hazard_list to return the result of the Chemical Hazard unordered list
         #Pass value = blank
         #If hazard_list gets value, it means the sortable list as changed, and associations should be updated
@@ -231,7 +232,13 @@ def chemindexedit():
 
     if form.process().accepted:
        response.flash = 'form accepted'
+       #update hazardlistabbrev
+       form.vars.hazardlistabbrev = (cwp_functions.returnhazardlistabbrev(form.vars.id))
+       #treatmentabbrev
+       #tsdfabbrev
+    
        try:
+
             #update hazard list
             ohazard_list = []
             hazard_list=(request.vars.hazard_list)
@@ -239,10 +246,11 @@ def chemindexedit():
                 ohazard_list=hazard_list.split(",") # create ordered list
                 db(db.chemindex_hazard_association.chemindex_id==form.vars.id).delete() #Delete all associations for chemindexid
                 for index, hazardid in enumerate(ohazard_list):
-                    db.chemindex_hazard_association.insert(chemindex_id=form.vars.id,hazard_id=hazardid,hazard_order=index)    
+                    db.chemindex_hazard_association.insert(chemindex_id=form.vars.id,hazard_id=hazardid,hazard_order=index)  
+
             record.update_record(**dict(form.vars))#record is updated
             redirect(URL('chemindex')+str(ohazard_list))
-            
+
          
        except NameError:
          

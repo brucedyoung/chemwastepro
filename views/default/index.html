@@ -14,7 +14,7 @@
                   <p>Items</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-bag"></i>
+                  <i class="cwp icon-24146"></i>
                 </div>
                 <a href={{=URL('inventory','item')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -27,7 +27,7 @@
                   <p>Containers</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-stats-bars"></i>
+                  <i class="cwp icon-barrel"></i>
                 </div>
                 <a href={{=URL('inventory','container')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -40,7 +40,7 @@
                   <p>Shipments</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-person-add"></i>
+                  <i class="cwp icon-truck-icon-31"></i>
                 </div>
                 <a href={{=URL('inventory','shipment')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -53,7 +53,7 @@
                   <p>Chemical Index</p>
                 </div>
                 <div class="icon">
-                  <i class="ion ion-pie-graph"></i>
+                  <i class="cwp icon-kilotau-icon"></i>
                 </div>
                 <a href={{=URL('inventory','chemindex')}} class="small-box-footer">More info <i class="fa fa-arrow-circle-right"></i></a>
               </div>
@@ -62,7 +62,6 @@
           
 
         </section><!-- /.content -->
-
 
 
 Chemical Waste Management Program
@@ -160,6 +159,18 @@ Chemical Waste Management Program
         The list field takes the place of an intermediate table.<br>
         For example, hazard = "5|6|10|13"
         
+    </p>
+   <p> <h3>Support Tables</h3><br>
+Tables that are variable to the organization, like number of cabinets, shelves, etc. are modifiable in the web interface. Support tables that drive business logic, have a regulatory corrolation, or not intended for users to modify, do not have a method to modify in the web interface. These can be modified in the database.
+<br>
+SUPPORT TABLES not viewable<br>
+State<br>
+receptacle<br>
+units<br>
+condition<br>
+conversions<br>
+hazard<br>
+fedwastecode<br>
     </p>
 <p>
     TODO

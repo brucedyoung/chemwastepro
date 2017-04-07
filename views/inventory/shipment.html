@@ -26,16 +26,19 @@
 
 
 
-
 <script type="text/javascript">
-$(document).ready(function(){
-    $("#shipment-table").DataTable({
-        data:  {{=results}},
-        columns: [
-            { data: 'id' },
-            { data: 'manifest' },
-            { data: 'editlink' },
+$(document).ready(function() {
+    $('#shipment-table').DataTable( {
+        "processing": true,
+        "serverSide": true,
+        "ajax": "{{=URL('serverprocessing','shipment')}}",
+         "columns": [
+            { "data": "id" },
+            { "data": "manifest" },
+            { "data": "editlink", "bSortable": false },
         ]
-    })
-});
+
+    } );
+} );
+
 </script>
